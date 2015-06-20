@@ -4,13 +4,16 @@ ANDROID_SDK_FILENAME=android-sdk_r24-linux.tgz
 ANDROID_SDK=http://dl.google.com/android/$ANDROID_SDK_FILENAME
 
 sudo apt-get update
-sudo apt-get install -y npm openjdk-7-jdk ant expect
+sudo apt-get install -y openjdk-7-jdk ant expect
 sudo apt-get install -y android-tools-adb android-tools-fastboot
 sudo apt-get install -y libc6-i386 lib32stdc++6 lib32gcc1 lib32ncurses5 zlib1g lib32z1
 sudo npm config set registry http://registry.npmjs.org/
 curl -sL https://deb.nodesource.com/setup_0.10 | sudo bash -
 sudo apt-get install -y  nodejs
+
+apt-get install npm
 sudo npm install -g cordova
+sudo npm install -g gulp
 
 curl -O $ANDROID_SDK
 tar -xzvf $ANDROID_SDK_FILENAME
@@ -32,3 +35,7 @@ expect {
     eof
 }
 '
+
+mkdir ~/node_modules_project
+ln -s ~/node_modules_project /vagrant/repiws/node_modules
+cd /vagrant/repiws && sudo npm install
