@@ -18,8 +18,10 @@
     "parse": "^1.4.2",
     "path": "^0.11.14",
     "react": "^0.13.3",
+    "react-swipe": "^2.1.0",
     "reactify": "^1.1.1",
     "rsvp": "^3.0.18",
+    "swipe-js-iso": "^2.0.1",
     "vinyl-source-stream": "^1.1.0"
   }
 }
