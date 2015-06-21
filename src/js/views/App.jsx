@@ -1,6 +1,7 @@
 "use strict"
 
 var React = require("react");
+var Carousel = require("./Carousel.jsx");
 
 var Repiws = React.createClass({
   render: function() {
@@ -15,6 +16,7 @@ var Repiws = React.createClass({
 		  </nav>    	
       <div className={""}>
       </div>
+      <Carousel />
     </div>
     );
   }
