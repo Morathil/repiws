@@ -15,3 +15,5 @@ platforms/android/lint.xml
 www/
 node_modules/
 hooks/
+
+.env.json
