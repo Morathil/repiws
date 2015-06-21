@@ -8,7 +8,7 @@ var Example = require("./Example.jsx");
 var Repiws = React.createClass({
   render: function() {
     return (
-    	<div>
+      <div>
         <Example />
         <Carousel />
       </div>

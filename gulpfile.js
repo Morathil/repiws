@@ -5,6 +5,7 @@ var source = require("vinyl-source-stream");
 var reactify = require("reactify");
 var path = require('path');
 var connect = require("gulp-connect");
+var concat = require("gulp-concat");
 
 var paths = {
   scripts: ["src/js/**/*"],
@@ -14,7 +15,7 @@ var paths = {
 
 gulp.task("vendor", function() {
 //  gulp.src(paths.vendor)
-//    .pipe(plugins.concat("vendor.js"))
+//    .pipe(concat("vendor.js"))
 //    .pipe(gulp.dest("www/vendor"));
 });
 
