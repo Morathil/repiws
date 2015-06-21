@@ -14,13 +14,12 @@ var publicMethods = function() {
     this.trigger("change");
   };
 
-  this.getData = function(data) {
-
+  this.get = function() {
+    return this._items;
   };
 
-  this.setData = function(data) {
-    console.log("setData");
-    console.log(data);
+  this.set = function(data) {
+    this._items = data;
   };
 
   this.like = function() {
@@ -47,7 +46,7 @@ var ItemStore = new ItemStore();
 ItemStore.dispatchToken = Dispatcher.register(function(action) {
   switch (action.type) {
     case "data":
-      ItemStore.setData(action.data);
+      ItemStore.set(action.data);
       ItemStore.emitChange();
       break;
 
