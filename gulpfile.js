@@ -6,12 +6,22 @@ var reactify = require("reactify");
 var path = require('path');
 var connect = require("gulp-connect");
 var concat = require("gulp-concat");
+var less = require("gulp-less");
 
 var paths = {
   scripts: ["src/js/**/*"],
   vendor: ["src/vendor/**/*"],
   statics: ["src/*.html", "src/img/**/*", "src/css/**/*", "src/font/**/*"]
 };
+
+gulp.task('less', function() {
+  gulp.src('src/less/**/*.less')
+    .pipe(less({
+      paths: [path.join(__dirname, 'less', 'includes')]
+    }))
+    .pipe(gulp.dest('www/css'))
+    .pipe(connect.reload());
+});
 
 gulp.task("vendor", function() {
 //  gulp.src(paths.vendor)
@@ -41,13 +51,13 @@ gulp.task("browserify", function() {
     .pipe(connect.reload());
 });
 
-gulp.task("default", ["vendor", "statics", "browserify"], function() {
+gulp.task("default", ["less", "vendor", "statics", "browserify"], function() {
   connect.server({
     root: "www",
     livereload: true,
     port: 9000
   });  
-  gulp.watch(paths.scripts, ["vendor", "statics", "browserify"]);
-  gulp.watch(paths.vendor, ["vendor", "statics", "browserify"]);
-  gulp.watch(paths.statics, ["vendor", "statics", "browserify"]);
-}); 
+  gulp.watch(paths.scripts, ["less", "vendor", "statics", "browserify"]);
+  gulp.watch(paths.vendor, ["less", "vendor", "statics", "browserify"]);
+  gulp.watch(paths.statics, ["less", "vendor", "statics", "browserify"]);
+});

@@ -4,6 +4,10 @@ var React = require("react");
 
 var ItemStore = require("./../stores/ItemStore");
 
+var posAbs = {
+  position: "absolute"
+};
+
 var Example = React.createClass({
 	getInitialState: function() {
 		return this._getItems();
@@ -21,7 +25,7 @@ var Example = React.createClass({
 		}
 
 		return (
-			<div>
+			<div style={posAbs}>
 				{content}
 			</div>
 		);
