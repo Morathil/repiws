@@ -2,6 +2,8 @@
 
 var RSVP = require("rsvp");
 var parse = require("parse").Parse;
+var asEvented = require("asEvented");
+
 
 var ParseUserUtils = function() {
   this._parse = parse;
@@ -44,12 +46,12 @@ var publicMethods = function() {
       });
   };
 
-  this.likes = function(item) {
+  this.like = function(item) {
     this._setRelation("likes", item);
     this._setRelation("processed", item);
   };
 
-  this.dislikes = function(item) {
+  this.dislike = function(item) {
     this._setRelation("dislikes", item);
     this._setRelation("processed", item);
   };
@@ -57,28 +59,26 @@ var publicMethods = function() {
 
 var privateMethods = function() {
   this._setRelation = function(relationName, item) {
-    var relation = this._createRelation(relationName);
+    var user = this._parse.User.current();
+    var relation = user.relation(relationName);    
     relation.add(item);
     user.save();
   };
 
   this._getRelation = function(relationName) {
-    var relation = this._createRelation(relationName);
-    return new RSVP.Promise(function() {
+    var user = this._parse.User.current();
+    var relation = user.relation(relationName);    
+    return new RSVP.Promise(function(resolve, reject) {
       relation.query().find({
         success: resolve,
         error: reject
       });
     });
   };
-
-  this.createRelation = function(relationName) {
-    var user = this._parse.User.current();
-    return user.relation(relationName);    
-  };
 }
 
 privateMethods.call(ParseUserUtils.prototype);
 publicMethods.call(ParseUserUtils.prototype);
+asEvented.call(ParseUserUtils.prototype);
 
 module.exports = new ParseUserUtils();

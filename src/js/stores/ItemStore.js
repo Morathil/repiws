@@ -4,6 +4,8 @@ var asEvented = require("asEvented");
 
 var Dispatcher = require("./../dispatcher/Dispatcher");
 var ParseObjectUtils = require("./../utils/ParseObjectUtils");
+var ParseUserUtils = require("./../utils/ParseUserUtils");
+
 
 var ItemStore = function() {
 
@@ -32,10 +34,12 @@ var publicMethods = function() {
 
   this.like = function(item) {
     ParseUserUtils.like(item);
+    ParseUserUtils.getLikes(item);
   };
 
   this.dislike = function(item) {
     ParseUserUtils.dislike(item);
+    ParseUserUtils.getLikes(item);
   };
 }
 
@@ -60,12 +64,12 @@ ItemStore.dispatchToken = Dispatcher.register(function(action) {
       break;
 
     case "likes":
-      ItemStore.setLikes(actions.data);
+      ItemStore.setLikes(action.data);
       ItemStore.emitChange();
       break;
 
     case "like":
-      ItemStore.like(actions.data);
+      ItemStore.like(action.data);
       ItemStore.emitChange();
       break;
 

@@ -1,6 +1,8 @@
 "use strict"
 
 var React = require("react");
+var ItemStore = require("./../stores/ItemStore");
+var ItemActions = require("./../actions/ItemActions");
 var Carousel = require("./Carousel.jsx");
 var Example = require("./Example.jsx");
 var MenuSet = require("./SlidingMenu.jsx");
@@ -25,7 +27,14 @@ var contentStyle = {
 }
 
 var Repiws = React.createClass({
-  
+  getInitialState: function() {
+    return this._getData()
+  },
+
+  componentWillMount: function() {
+    ItemStore.on("change", this._onItemStoreChange);
+  },
+
   showMenu: function() {
     this.refs.menu.show();
   },
@@ -35,6 +44,8 @@ var Repiws = React.createClass({
   },
 
   render: function() {
+    var that = this;
+
     return (
       <div style={height}>
         <div style={zindex}>
@@ -47,9 +58,18 @@ var Repiws = React.createClass({
           </Menu>
           
           <Menu ref="deeperMenu" alignment="left" type="deeper-menu">
-            <MenuItem>Deep option 1</MenuItem>
-            <MenuItem>Deep option 2</MenuItem>
-            <MenuItem>Deep option 3</MenuItem>
+            {
+              this.state.items.map(function(item, index) {
+                return <MenuItem key={item.id}><div onClick={that._like.bind(null, item)}>{item.get("bla")}</div></MenuItem>
+              })
+            }
+
+
+            {
+              this.state.likes.map(function(item, index) {
+                return <MenuItem key={item.id}><div>{item.get("bla")}</div></MenuItem>
+              })
+            }            
           </Menu>
     
           <Example />
@@ -59,7 +79,22 @@ var Repiws = React.createClass({
         </Carousel>
       </div>
     );
-  }
+  },
+
+  _like: function(item) {
+    ItemActions.like(item);
+  },
+
+  _onItemStoreChange: function() {
+    this.setState(this._getData());
+  },
+
+  _getData: function() {
+    return {
+      items: ItemStore.get() || [],
+      likes: ItemStore.getLikes() || []
+    };
+  }  
 });
 
 module.exports = Repiws;

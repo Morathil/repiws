@@ -2,6 +2,13 @@ var React = require("react");
 var App = require("./views/App.jsx");
 var ENV = require("../../.env.json");
 
+var RSVP = require("rsvp");
+
+RSVP.on("error", function(error) {
+	console.log("RSVP ERROR:");
+	console.log(error);
+})
+
 var Parse = require("parse").Parse;
 Parse.initialize(ENV.PARSE_APP_ID, ENV.PARSE_JAVASCRIPT_KEY);
 
