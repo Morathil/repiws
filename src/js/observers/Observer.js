@@ -16,7 +16,8 @@ var publicMethods = function() {
 
 var privateMethods = function() {
   this._initListeners = function() {
-    ParseObjectUtils.on("data", ItemActions.data)
+    ParseObjectUtils.on("data", ItemActions.data);
+    ParseObjectUtils.on("likes", ItemActions.data);
   };
 } 
 

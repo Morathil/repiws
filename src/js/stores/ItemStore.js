@@ -14,26 +14,35 @@ var publicMethods = function() {
     this.trigger("change");
   };
 
+  this.set = function(items) {
+    this._items = items;
+  };
+
   this.get = function() {
     return this._items;
   };
 
-  this.set = function(data) {
-    this._items = data;
+  this.setLikes = function(likes) {
+    this._likes = likes;
   };
 
-  this.like = function() {
-
+  this.getLikes = function() {
+    return this._likes;
   };
 
-  this.dislike = function() {
+  this.like = function(item) {
+    ParseUserUtils.like(item);
+  };
 
+  this.dislike = function(item) {
+    ParseUserUtils.dislike(item);
   };
 }
 
 var privateMethods = function() {
   this._fetch = function() {
     ParseObjectUtils.getAll();
+    ParseUserUtils.getLikes();
   };
 }
 
@@ -50,13 +59,18 @@ ItemStore.dispatchToken = Dispatcher.register(function(action) {
       ItemStore.emitChange();
       break;
 
+    case "likes":
+      ItemStore.setLikes(actions.data);
+      ItemStore.emitChange();
+      break;
+
     case "like":
-      ItemStore.like();
+      ItemStore.like(actions.data);
       ItemStore.emitChange();
       break;
 
     case "dislike":
-      ItemStore.disklike();
+      ItemStore.dislike(action.data);
       ItemStore.emitChange();
       break;
   }

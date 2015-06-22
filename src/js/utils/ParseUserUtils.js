@@ -37,20 +37,22 @@ var publicMethods = function() {
   };
 
   this.getLikes = function() {
-    return this._getRelation("likes");
-  };
-
-  this.getDislikes = function() {
-    return this._getRelation("dislikes");
+    var that = this;
+    return this._getRelation("likes")
+      .then(function(likes) {
+        that.trigger("likes", likes);
+      });
   };
 
   this.likes = function(item) {
     this._setRelation("likes", item);
+    this._setRelation("processed", item);
   };
 
   this.dislikes = function(item) {
     this._setRelation("dislikes", item);
-  };  
+    this._setRelation("processed", item);
+  };
 }
 
 var privateMethods = function() {

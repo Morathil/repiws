@@ -16,6 +16,7 @@ window.parseObjectUtils = ParseObjectUtils;
 
 // TODO: Remove hard coded login
 var ItemStore = require("./stores/ItemStore");
+window.ItemStore = ItemStore;
 
 window.parseUserUtils.logIn({
 	userName: "1234",
