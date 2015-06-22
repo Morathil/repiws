@@ -1,5 +1,5 @@
 var React = require("react");
-var ReactSwipe = require("react-swipe");
+var ReactSwipe = require("../components/react-swipe.js");
 
 var link1 = {
   backgroundImage: "url('https://warpnet-media.s3.amazonaws.com/6dab2c537d3a0243f98558d3ac468e718b5ed006067a5b71798fb8b8')"
