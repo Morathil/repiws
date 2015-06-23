@@ -1,6 +1,10 @@
 var React = require("react");
 var ReactSwipe = require("../components/react-swipe.js");
 
+var ItemStore = require("./../stores/ItemStore");
+var ItemActions = require("./../actions/ItemActions");
+
+
 var Carousel = React.createClass({
   getInitialState: function() {
     return this._getData()
