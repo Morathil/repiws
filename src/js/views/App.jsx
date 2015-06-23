@@ -2,7 +2,6 @@
 
 var React = require("react");
 var Carousel = require("./Carousel.jsx");
-var Example = require("./Example.jsx");
 var MenuSet = require("./SlidingMenu.jsx");
 var Menu = MenuSet.Menu;
 var MenuItem = MenuSet.MenuItem;
@@ -52,8 +51,6 @@ var Repiws = React.createClass({
             <MenuItem>Option 2</MenuItem>
             <MenuItem>Option 3</MenuItem>        
           </Menu>
-    
-          <Example />
         </div>
         <Carousel />
       </div>
