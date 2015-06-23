@@ -1,26 +1,50 @@
 var React = require("react");
 var ReactSwipe = require("../components/react-swipe.js");
 
-var link1 = {
-  backgroundImage: "url('https://warpnet-media.s3.amazonaws.com/6dab2c537d3a0243f98558d3ac468e718b5ed006067a5b71798fb8b8')"
-}
-var link2 = {
-  backgroundImage: "url('http://www.mawakebholidays.com/sites/default/files/styles/galleryformatter_slide/public/bmi_nice.jpg?itok=We4lvGuX')"
-}
-var link3 = {
-  backgroundImage: "url('https://pbs.twimg.com/profile_images/1058163083/Nice_Things_Logo_cropped_small_400x400.jpg')"
-}
-
 var Carousel = React.createClass({
+  getInitialState: function() {
+    return this._getData()
+  },
+
+  componentWillMount: function() {
+    ItemStore.on("change", this._onItemStoreChange);
+  },
+
   render: function() {
+    var that = this;
+
+    if (this.state.items.length === 0) {
+      return null;
+    }
+
     return (
       <ReactSwipe id="swipe" continuous={true}>
-        <div className="offer" style={link1}></div>
-        <div className="offer" style={link2}></div>
-        <div className="offer" style={link3}></div>
+        {
+          this.state.items.map(function(item, index) {
+            var backgroundImage = {
+              backgroundImage: "url(" + item.get("imageUrl") + ")"
+            };
+
+            return <div className="offer" onClick={that._like.bind(null, item)} style={backgroundImage} key={item.id}></div>
+          })
+        }      
       </ReactSwipe>
     );
-  }
+  },
+
+  _like: function(item) {
+    ItemActions.like(item);
+  },
+
+  _onItemStoreChange: function() {
+    this.setState(this._getData());
+  },
+
+  _getData: function() {
+    return {
+      items: ItemStore.get() || []
+    };
+  }    
 });
 
 module.exports = Carousel;
