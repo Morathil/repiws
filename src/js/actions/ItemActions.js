@@ -3,9 +3,7 @@
 
 var Dispatcher = require("./../dispatcher/Dispatcher");
 
-var ItemActions = function() {
-
-}
+var ItemActions = function() {}
 
 var publicMethods = function() {
   this.data = function(items) {
@@ -22,6 +20,13 @@ var publicMethods = function() {
     });
   },
 
+  this.dislikes = function(dislikes) {
+    Dispatcher.dispatch({
+      type: "dislikes",
+      data: dislikes 
+    });
+  },
+
   this.like = function(item) {
     Dispatcher.dispatch({
       type: "like",
@@ -34,7 +39,7 @@ var publicMethods = function() {
       type: "dislike",
       data: item
     });
-  }  
+  }
 }
 
 publicMethods.call(ItemActions.prototype);

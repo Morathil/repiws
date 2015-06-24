@@ -15,6 +15,7 @@ var privateMethods = function() {
     ParseObjectUtils.on("data", ItemActions.data);
 
     ParseUserUtils.on("likes", ItemActions.likes);
+    ParseUserUtils.on("dislikes", ItemActions.dislikes);
   };
 } 
 

@@ -8,7 +8,9 @@ var ParseUserUtils = require("./../utils/ParseUserUtils");
 
 
 var ItemStore = function() {
-
+  this._likes = [];
+  this._dislikes = [];
+  this._items = [];
 }
 
 var publicMethods = function() {
@@ -21,11 +23,25 @@ var publicMethods = function() {
   };
 
   this.get = function() {
-    return this._items;
+    var likeIds = this._likes.map(function(like) {
+      return like.id
+    });
+
+    var dislikeIds = this._dislikes.map(function(dislike) {
+      return dislike.id
+    });
+
+    return this._items.filter(function(item) {
+      return (likeIds.indexOf(item.id) === -1 || dislikeIds.indexOf(item.id) === -1)
+    });
   };
 
   this.setLikes = function(likes) {
     this._likes = likes;
+  };
+
+  this.setDislikes = function(dislikes) {
+    this._dislikes = dislikes;
   };
 
   this.getLikes = function() {
@@ -34,19 +50,20 @@ var publicMethods = function() {
 
   this.like = function(item) {
     ParseUserUtils.like(item);
-    ParseUserUtils.getLikes(item);
+    ParseUserUtils.getLikes();
   };
 
   this.dislike = function(item) {
+    ParseUserUtils.getDislikes();
     ParseUserUtils.dislike(item);
-    ParseUserUtils.getLikes(item);
   };
 }
 
 var privateMethods = function() {
   this._fetch = function() {
-    ParseObjectUtils.getAll();
     ParseUserUtils.getLikes();
+    ParseUserUtils.getDislikes();
+    ParseObjectUtils.getAll();
   };
 }
 
@@ -57,6 +74,7 @@ asEvented.call(ItemStore.prototype);
 var ItemStore = new ItemStore();
 
 ItemStore.dispatchToken = Dispatcher.register(function(action) {
+  console.log(action.type)
   switch (action.type) {
     case "data":
       ItemStore.set(action.data);
@@ -68,14 +86,17 @@ ItemStore.dispatchToken = Dispatcher.register(function(action) {
       ItemStore.emitChange();
       break;
 
+    case "dislikes":
+      ItemStore.setDislikes(action.data);
+      ItemStore.emitChange();
+      break;
+
     case "like":
       ItemStore.like(action.data);
-      ItemStore.emitChange();
       break;
 
     case "dislike":
       ItemStore.dislike(action.data);
-      ItemStore.emitChange();
       break;
   }
 });

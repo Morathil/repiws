@@ -46,14 +46,20 @@ var publicMethods = function() {
       });
   };
 
+  this.getDislikes = function() {
+    var that = this;
+    return this._getRelation("dislikes")
+      .then(function(dislikes) {
+        that.trigger("dislikes", dislikes);
+      });
+  };
+
   this.like = function(item) {
     this._setRelation("likes", item);
-    this._setRelation("processed", item);
   };
 
   this.dislike = function(item) {
     this._setRelation("dislikes", item);
-    this._setRelation("processed", item);
   };
 }
 

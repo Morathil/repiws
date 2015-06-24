@@ -22,7 +22,7 @@ var Carousel = React.createClass({
     }
 
     return (
-      <ReactSwipe id="swipe" continuous={true}>
+      <ReactSwipe id="swipe" continuous={true} shouldUpdate={function(){return true;}}>
         {
           this.state.items.map(function(item, index) {
             var backgroundImage = {
