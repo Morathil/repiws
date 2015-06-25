@@ -10,6 +10,13 @@ var ParseUserUtils = function() {
 }
 
 var publicMethods = function() {
+  this.initialize = function() {
+    var currentUser = this._parse.User.current();
+    if (currentUser) {
+      this.trigger("loggedIn", currentUser);
+    }
+  };
+
   this.signUp = function(userData) {
     var user = new this._parse.User();
     user.set("username", userData.userName);
@@ -30,12 +37,32 @@ var publicMethods = function() {
       that._parse.User.logIn(userData.userName, userData.password, {
         success: resolve,
         error: reject
+      }).then(function(user) {
+        that.trigger("loggedIn", user);
       });
     });
   };
 
+  this.facebookLogIn = function() {
+    var that = this;
+    return new RSVP.Promise(function(resolve, reject) {
+      that._parse.FacebookUtils.logIn(null, {
+        success: resolve,
+        error: reject
+      });
+    }).then(function(user) {
+      that.trigger("loggedIn", user);
+    });
+  };
+
   this.logOut = function() {
-    this._parse.User.logOut();
+    var that = this;
+    return new RSVP.Promise(function(resolve, reject) {
+      that._parse.User.logOut();
+      resolve();
+    }).then(function() {
+      that.trigger("loggedOut");
+    });
   };
 
   this.getLikes = function() {

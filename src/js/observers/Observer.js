@@ -3,6 +3,8 @@
 var asEvented = require("asEvented");
 
 var ItemActions = require("./../actions/ItemActions");
+var UserActions = require("./../actions/UserActions");
+
 var ParseObjectUtils = require("./../utils/ParseObjectUtils");
 var ParseUserUtils = require("./../utils/ParseUserUtils");
 
@@ -16,6 +18,8 @@ var privateMethods = function() {
 
     ParseUserUtils.on("likes", ItemActions.likes);
     ParseUserUtils.on("dislikes", ItemActions.dislikes);
+    ParseUserUtils.on("loggedIn", UserActions.loggedIn);
+    ParseUserUtils.on("loggedOut", UserActions.loggedOut);
   };
 } 
 

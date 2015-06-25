@@ -8,35 +8,35 @@ var ItemActions = function() {}
 var publicMethods = function() {
   this.data = function(items) {
     Dispatcher.dispatch({
-      type: "data",
+      type: "item-data",
       data: items
     });
   },
 
   this.likes = function(likes) {
     Dispatcher.dispatch({
-      type: "likes",
+      type: "item-likes",
       data: likes 
     });
   },
 
   this.dislikes = function(dislikes) {
     Dispatcher.dispatch({
-      type: "dislikes",
+      type: "item-dislikes",
       data: dislikes 
     });
   },
 
   this.like = function(item) {
     Dispatcher.dispatch({
-      type: "like",
+      type: "item-like",
       data: item 
     });
   },
 
   this.dislike = function(item) {
     Dispatcher.dispatch({
-      type: "dislike",
+      type: "item-dislike",
       data: item
     });
   }

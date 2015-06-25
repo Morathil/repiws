@@ -3,6 +3,10 @@
 var React = require("react");
 var Carousel = require("./Carousel.jsx");
 var MenuSet = require("./SlidingMenu.jsx");
+
+var UserActions = require("./../actions/UserActions");
+var UserStore = require("./../stores/UserStore");
+
 var Menu = MenuSet.Menu;
 var MenuItem = MenuSet.MenuItem;
 
@@ -24,6 +28,14 @@ var contentStyle = {
 }
 
 var Repiws = React.createClass({
+  getInitialState: function() {
+    return this._getData()
+  },
+
+  componentWillMount: function() {
+    UserStore.on("change", this._onUserStoreChange);
+  },
+
   showMenu: function() {
     this.refs.menu.show();
   },
@@ -34,6 +46,12 @@ var Repiws = React.createClass({
 
   render: function() {
     var that = this;
+    var loginButtons = [
+      <MenuItem key={1} onClick={this._facebookLogin}>FacebookLogin</MenuItem>,
+      <MenuItem key={2} onClick={this._login}>Login</MenuItem>
+    ];
+    var logoutButton =  <MenuItem onClick={this._logout}>Logout</MenuItem>
+    var button = this.state.currentUser ? logoutButton : loginButtons;
 
     return (
       <div style={height}>
@@ -41,9 +59,8 @@ var Repiws = React.createClass({
           <button style={contentStyle} onClick={this.showMenu}>Show Menu!</button>
           
           <Menu ref="menu" alignment="left" type="main-menu">
-            <MenuItem onClick={this.showDeeperMenu}>Option 1</MenuItem>
-            <MenuItem onClick={this.showDeeperMenu}>Option 2</MenuItem>
-            <MenuItem onClick={this.showDeeperMenu}>Option 3</MenuItem>
+            {button}
+            <MenuItem onClick={this.showDeeperMenu}>Deeper Menu</MenuItem>
           </Menu>
           
           <Menu ref="deeperMenu" alignment="left" type="deeper-menu">
@@ -55,6 +72,31 @@ var Repiws = React.createClass({
         <Carousel />
       </div>
     );
+  },
+
+  _facebookLogin: function() {
+    UserActions.facebookLogin();
+  },
+
+  _login: function() {
+    UserActions.login({
+      userName: "1234",
+      password: "1234"
+    });
+  },
+
+  _logout: function() {
+    UserActions.logout();
+  },
+
+  _getData: function() {
+    return {
+      currentUser: UserStore.get()
+    };
+  },
+
+  _onUserStoreChange: function() {
+    this.setState(this._getData());
   }
 });
 

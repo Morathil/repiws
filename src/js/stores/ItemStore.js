@@ -57,15 +57,15 @@ var publicMethods = function() {
     ParseUserUtils.getDislikes();
     ParseUserUtils.dislike(item);
   };
-}
 
-var privateMethods = function() {
-  this._fetch = function() {
+  this.fetch = function() {
     ParseUserUtils.getLikes();
     ParseUserUtils.getDislikes();
     ParseObjectUtils.getAll();
   };
 }
+
+var privateMethods = function() {}
 
 privateMethods.call(ItemStore.prototype);
 publicMethods.call(ItemStore.prototype);
@@ -74,30 +74,34 @@ asEvented.call(ItemStore.prototype);
 var ItemStore = new ItemStore();
 
 ItemStore.dispatchToken = Dispatcher.register(function(action) {
-  console.log(action.type)
+  console.log("ItemStore:" + action.type);
   switch (action.type) {
-    case "data":
+    case "item-data":
       ItemStore.set(action.data);
       ItemStore.emitChange();
       break;
 
-    case "likes":
+    case "item-likes":
       ItemStore.setLikes(action.data);
       ItemStore.emitChange();
       break;
 
-    case "dislikes":
+    case "item-dislikes":
       ItemStore.setDislikes(action.data);
       ItemStore.emitChange();
       break;
 
-    case "like":
+    case "item-like":
       ItemStore.like(action.data);
       break;
 
-    case "dislike":
+    case "item-dislike":
       ItemStore.dislike(action.data);
       break;
+
+    case "user-loggedIn":
+      ItemStore.fetch();
+      break;    
   }
 });
 
