@@ -14,14 +14,11 @@ Parse.initialize(ENV.PARSE_APP_ID, ENV.PARSE_JAVASCRIPT_KEY);
 var FacebookSdk = require("./components/facebookSdk");
 var App = require("./views/App.jsx");
 
-
-
 // Log rsvp errors
 RSVP.on("error", function(error) {
 	console.log("RSVP ERROR:");
 	console.log(error);
 });
-
 
 // Require all necessary js files and call if needed call their initialize method
 var Observer = require("./observers/Observer");

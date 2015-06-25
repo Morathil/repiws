@@ -32,7 +32,7 @@ var publicMethods = function() {
     });
 
     return this._items.filter(function(item) {
-      return (likeIds.indexOf(item.id) === -1 || dislikeIds.indexOf(item.id) === -1)
+      return (likeIds.indexOf(item.id) === -1 && dislikeIds.indexOf(item.id) === -1)
     });
   };
 

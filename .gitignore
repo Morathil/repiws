@@ -12,6 +12,9 @@ platforms/android/.project
 platforms/android/.settings/org.eclipse.jdt.core.prefs
 platforms/android/lint.xml
 
+platforms/android/.gradle/
+platforms/android/CordovaLib/build/
+
 www/
 node_modules/
 hooks/
