@@ -1,7 +1,6 @@
 "use strict"
 
 var React = require("react");
-var Carousel = require("./Carousel.jsx");
 var MenuSet = require("./SlidingMenu.jsx");
 
 var UserActions = require("./../actions/UserActions");
@@ -9,6 +8,7 @@ var UserStore = require("./../stores/UserStore");
 
 var Menu = MenuSet.Menu;
 var MenuItem = MenuSet.MenuItem;
+var Deck = require("./Deck.jsx");
 
 var height = {
   height: "100%"
@@ -68,8 +68,9 @@ var Repiws = React.createClass({
             <MenuItem>Option 2</MenuItem>
             <MenuItem>Option 3</MenuItem>        
           </Menu>
+
+          <Deck />
         </div>
-        <Carousel />
       </div>
     );
   },
