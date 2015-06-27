@@ -6,6 +6,7 @@ var Dispatcher = require("./../dispatcher/Dispatcher");
 var ParseObjectUtils = require("./../utils/ParseObjectUtils");
 var ParseUserUtils = require("./../utils/ParseUserUtils");
 
+var MAX_DECK_SIZE = 5;
 
 var ItemStore = function() {
   this._likes = [];
@@ -15,6 +16,7 @@ var ItemStore = function() {
 
 var publicMethods = function() {
   this.emitChange = function() {
+    console.log("CHANGE ITEM STORE");
     this.trigger("change");
   };
 
@@ -31,9 +33,15 @@ var publicMethods = function() {
       return dislike.id
     });
 
-    return this._items.filter(function(item) {
-      return (likeIds.indexOf(item.id) === -1 && dislikeIds.indexOf(item.id) === -1)
-    });
+    var filteredItems = []
+    for (var i = 0; i < this._items.length; i++) {
+      var item = this._items[i];
+      if ((likeIds.indexOf(item.id) === -1 && dislikeIds.indexOf(item.id) === -1) && filteredItems.length <= MAX_DECK_SIZE) {
+        filteredItems.push(item);
+      }
+    }
+
+    return filteredItems.reverse();
   };
 
   this.setLikes = function(likes) {
@@ -49,8 +57,9 @@ var publicMethods = function() {
   };
 
   this.like = function(item) {
-    ParseUserUtils.like(item);
-    ParseUserUtils.getLikes();
+    ParseUserUtils.like(item).then(function() {
+      ParseUserUtils.getLikes()
+    });
   };
 
   this.dislike = function(item) {
@@ -74,7 +83,6 @@ asEvented.call(ItemStore.prototype);
 var ItemStore = new ItemStore();
 
 ItemStore.dispatchToken = Dispatcher.register(function(action) {
-  console.log("ItemStore:" + action.type);
   switch (action.type) {
     case "item-data":
       ItemStore.set(action.data);
@@ -101,7 +109,7 @@ ItemStore.dispatchToken = Dispatcher.register(function(action) {
 
     case "user-loggedIn":
       ItemStore.fetch();
-      break;    
+      break;
   }
 });
 

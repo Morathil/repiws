@@ -82,25 +82,25 @@ var publicMethods = function() {
   };
 
   this.like = function(item) {
-    this._setRelation("likes", item);
+    return this._setRelation("likes", item);
   };
 
   this.dislike = function(item) {
-    this._setRelation("dislikes", item);
+    return this._setRelation("dislikes", item);
   };
 }
 
 var privateMethods = function() {
   this._setRelation = function(relationName, item) {
     var user = this._parse.User.current();
-    var relation = user.relation(relationName);    
+    var relation = user.relation(relationName);
     relation.add(item);
-    user.save();
+    return user.save();
   };
 
   this._getRelation = function(relationName) {
     var user = this._parse.User.current();
-    var relation = user.relation(relationName);    
+    var relation = user.relation(relationName);
     return new RSVP.Promise(function(resolve, reject) {
       relation.query().find({
         success: resolve,

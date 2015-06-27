@@ -1,0 +1,17 @@
+{
+  "global": {
+    "parseVersion": "1.4.2"
+  },
+  "applications": {
+    "ApiSync": {
+      "link": "Repiws"
+    },
+    "Repiws": {
+      "applicationId": "BDSUZVipD6QrB6GCEhMLl4QSBYaUBEBx1QbAfOQG",
+      "masterKey": "Tu7xPPdOilSt6RAZyjBmLY3XfEq9GC8qNzJRj2pp"
+    },
+    "_default": {
+      "link": "Repiws"
+    }
+  }
+}

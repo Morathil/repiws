@@ -1,12 +1,19 @@
 var React = require("react");
-var Swing = require("../components/swing.min.js");
+var Swing = require("../components/swing.min");
 
 var ItemActions = require("../actions/ItemActions");
 var ItemStore = require("../stores/ItemStore");
 
 
 var Deck = React.createClass({
-  stack: gajus.Swing.Stack(),
+  config: {
+    throwOutConfidence: function (offset, element) {
+      var confidence = Math.min(Math.abs(offset) / element.offsetWidth, 1);
+      return confidence > 0.35 ? 1 : 0;
+    },
+    minThrowOutDistance: 2048,
+    maxThrowOutDistance: 2048
+},
   cards: [],
   images: [],
 
@@ -15,32 +22,40 @@ var Deck = React.createClass({
   },
 
   componentDidMount: function() {
+    this.stack = gajus.Swing.Stack(this.config);
     // Prepare the cards in the stack for iteration.
     this.cards = [].slice.call(document.querySelectorAll('ul li'))
-    
+
     var that = this;
+    var card;
     this.cards.forEach(function (targetElement) {
         // Add card element to the Stack.
-        that.stack.createCard(targetElement);
+        card = that.stack.createCard(targetElement);
+        card.on('throwout', that._onThrowOut);
     });
-    
+
     // Add event listener for when a card is thrown out of the stack.
-    this.stack.on('throwout', this._onThrowOut);
   },
 
   componentDidUpdate: function() {
     // Prepare the cards in the stack for iteration.
     this.cards = [].slice.call(document.querySelectorAll('ul li'))
-    
+
     var that = this;
+    var card;
     this.cards.forEach(function (targetElement) {
         // Add card element to the Stack.
-        that.stack.createCard(targetElement);
+        card = that.stack.createCard(targetElement);
+        card.on('throwout', that._onThrowOut);
     });
   },
 
   componentWillMount: function() {
     ItemStore.on("change", this._onItemStoreChange);
+  },
+
+  componentWillUnmount: function () {
+    ItemStore.off("change", this._onItemStoreChange);
   },
 
   render: function() {
@@ -54,7 +69,7 @@ var Deck = React.createClass({
             backgroundImage: "url(" + backgroundUrl + ")",
             backgroundSize: "cover"
           }
-          return <li ref={"index" + index} style={bgi} key={index}></li>
+          return <li style={bgi} key={backgroundUrl+index+new Date().getTime()}></li>
         })}
         </ul>
       </div>
@@ -66,8 +81,9 @@ var Deck = React.createClass({
   },
 
   _getData: function() {
+    var items = ItemStore.get() || [];
     return {
-      items: ItemStore.get() || []
+      items: items
     };
   },
 

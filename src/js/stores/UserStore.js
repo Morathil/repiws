@@ -41,7 +41,7 @@ var publicMethods = function() {
 
   this.loggedOut = function() {
     this._currentUser = null;
-  };  
+  };
 }
 
 var privateMethods = function() {}
@@ -53,7 +53,6 @@ asEvented.call(UserStore.prototype);
 var UserStore = new UserStore();
 
 UserStore.dispatchToken = Dispatcher.register(function(action) {
-  console.log("UserStore:" + action.type);
   switch (action.type) {
     case "user-login":
       UserStore.login(action.data);
@@ -75,7 +74,7 @@ UserStore.dispatchToken = Dispatcher.register(function(action) {
     case "user-loggedOut":
       UserStore.loggedOut();
       UserStore.emitChange();
-      break;      
+      break;
   }
 });
 
