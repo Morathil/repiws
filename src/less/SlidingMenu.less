@@ -11,12 +11,12 @@ button { width:auto; padding:7px 22px; }
 .menu { display:block;
   @menu-width:400px;
   >div { position:absolute; z-index:2; top:0;  width:@menu-width; height:100%; .border-box; .transition(-webkit-transform ease 250ms); .transition(transform ease 250ms);
-      
+
 	&.right {right:@menu-width*-1; }
-	&.visible.right { .transform(translate3d(@menu-width*-1, 0, 0)); }
+	&.visible.right { .transform(translate3d(@menu-width*-1, 0, 0)); max-width: 80%;}
 	&.main-menu { background:#0000FF;}
 	&.deeper-menu { background:#EE82EE;}
-	
+
 	>.menu-item { float:left; width:100%; margin:0; padding:10px 15px; border-bottom:solid 1px #555; cursor:pointer; .border-box;
 	>span { float:left; color:inherit; }
 	}

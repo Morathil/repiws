@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="main"><source path="/home/morathil/projects/repiws/platforms/android/com.phonegap.plugins.facebookconnect/repiws-FacebookLib/assets"/></dataSet><dataSet config="debug"><source path="/home/morathil/projects/repiws/platforms/android/com.phonegap.plugins.facebookconnect/repiws-FacebookLib/src/debug/assets"/></dataSet></merger>
