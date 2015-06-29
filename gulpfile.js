@@ -14,9 +14,9 @@ var paths = {
   scripts: ["src/js/**/*"],
   vendor: ["src/vendor/**/*"],
   statics: ["src/*.html", "src/img/**/*", "src/font/**/*"],
-  css: ["src/css/**/*"],
-  less: ["src/less/**/*"],
-  sass: ["src/sass/**/*"]
+  css: ["src/style/css/**/*"],
+  less: ["src/style/less/**/*"],
+  sass: ["src/style/sass/**/*"]
 };
 
 gulp.task('css', function() {
