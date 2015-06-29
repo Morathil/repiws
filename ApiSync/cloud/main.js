@@ -23,3 +23,171 @@ Parse.Cloud.job("syncCatApi", function(request, status) {
     status.success("created cat pics");
   });
 });
+
+
+/*
+ * Example url for quering 50 hotels from Amsterdam
+ *
+   http://api.ean.com/ean-services/rs/hotel/v3/list?
+   cid=55505
+   &minorRev=28
+   &apiKey=cbrzfta369qwyrm9t5b8y8kf
+   &locale=en_US
+   &currencyCode=EUR
+   &customerIpAddress=10.187.20.19
+   &customerUserAgent=Mozilla/5.0+(Windows+NT+10.0;+WOW64)+AppleWebKit/537.36+(KHTML,+like+Gecko)+Chrome/43.0.2357.130+Safari/537.36&   
+   customerSessionId=
+   &xml=<HotelListRequest>
+   <RoomGroup>
+   <Room>
+   <numberOfAdults>2</numberOfAdults>
+   </Room>
+   </RoomGroup>
+   <destinationString>Amsterdam</destinationString>
+   <numberOfResults>50</numberOfResults>
+   <minStarRating>3</minStarRating>
+   <maxStarRating>5</maxStarRating>
+   <propertyCategory>1</propertyCategory>
+   </HotelListRequest>
+*/
+
+/*
+ * Example for quering the room images
+ *
+  http://api.ean.com/ean-services/rs/hotel/v3/roomImages?minorRev=28
+  &cid=55505
+  &apiKey=cbrzfta369qwyrm9t5b8y8kf
+  &customerUserAgent=Mozilla/5.0+(Windows+NT+10.0;+WOW64)+AppleWebKit/537.36+(KHTML,+like+Gecko)+Chrome/43.0.2357.130+Safari/537.36&
+  &customerIpAddress=10.187.20.19
+  &customerSessionId=
+  &xml=
+  <HotelRoomImageRequest>
+     <hotelId>373338</hotelId>
+  </HotelRoomImageRequest>
+*/
+
+/*
+   http://api.ean.com/ean-services/rs/hotel/v3/list?cid=55505&minorRev=28&apiKey=cbrzfta369qwyrm9t5b8y8kf&locale=en_US&currencyCode=EUR&customerIpAddress=10.187.20.19&customerUserAgent=Mozilla/5.0+(Windows+NT+10.0;+WOW64)+AppleWebKit/537.36+(KHTML,+like+Gecko)+Chrome/43.0.2357.130+Safari/537.36&customerSessionId=&xml=<HotelListRequest><RoomGroup><Room><numberOfAdults>0</numberOfAdults></Room></RoomGroup><destinationString>Amsterdam</destinationString><numberOfResults>20</numberOfResults><minStarRating>3</minStarRating><maxStarRating>5</maxStarRating><propertyCategory>1</propertyCategory></HotelListRequest>
+   
+   http://api.ean.com/ean-services/rs/hotel/v3/roomImages?minorRev=28&cid=55505&apiKey=cbrzfta369qwyrm9t5b8y8kf&customerUserAgent=Mozilla/5.0+(Windows+NT+10.0;+WOW64)+AppleWebKit/537.36+(KHTML,+like+Gecko)+Chrome/43.0.2357.130+Safari/537.36&&customerIpAddress=10.187.20.19&customerSessionId=&xml=<HotelRoomImageRequest><hotelId>113647</hotelId></HotelRoomImageRequest>
+*/
+
+// load 50 hotels from one random city 
+
+var cities = [
+  "Mexico City",
+  "Tianjin",
+  "Lahore",
+  "Beijing",
+  "Seoul",
+  "Suzhou",
+  "Mumbai",
+  "Abidjan",
+  "Yokohama",
+  "Addis Ababa",
+  "Kolkata",
+  "Istanbul",
+  "Johannesburg",
+  "Jaipur",
+  "Dongguan",
+  "Kinshasa",
+  "Singapore",
+  "Bogota",
+  "Shenzhen",
+  "Sao Paulo",
+  "Ahmedabad",
+  "Delhi",
+  "Cape Town",
+  "Moscow",
+  "Riyadh",
+  "London",
+  "Hyderabad",
+  "Cairo",
+  "Shanghai",
+  "Lima",
+  "Nairobi",
+  "Berlin",
+  "Ho Chi Minh City",
+  "Tokyo",
+  "Surat",
+  "New Taipei City",
+  "Hanoi",
+  "Baghdad",
+  "Lagos",
+  "Chennai",
+  "Bangalore",
+  "Guangzhou",
+  "Bangkok",
+  "Tehran",
+  "Pyongyang",
+  "Yangon",
+  "Saint Petersburg",
+  "Jeddah",
+  "Busan",
+  "Hong Kong"
+];
+
+Parse.Cloud.job("SyncHotelData", function(request, status) {
+  var entriesSynced = 0;
+  var randomCityIndex = Math.floor(Math.random()*cities.length);
+  var randomCity = cities[randomCityIndex];
+  var queryUrl = "http://api.ean.com/ean-services/rs/hotel/v3/list?cid=55505&minorRev=28&apiKey=cbrzfta369qwyrm9t5b8y8kf&locale=en_US&currencyCode=EUR&customerIpAddress=10.187.20.19&customerUserAgent=Mozilla/5.0+(Windows+NT+10.0;+WOW64)+AppleWebKit/537.36+(KHTML,+like+Gecko)+Chrome/43.0.2357.130+Safari/537.36&customerSessionId=&xml=<HotelListRequest><RoomGroup><Room><numberOfAdults>0</numberOfAdults></Room></RoomGroup><destinationString>" + randomCity + "</destinationString><numberOfResults>20</numberOfResults><minStarRating>3</minStarRating><maxStarRating>5</maxStarRating><propertyCategory>1</propertyCategory></HotelListRequest>";
+  Parse.Cloud.httpRequest({
+    url: queryUrl
+  }).then(function(response) {
+    var promises = [];
+    var text = JSON.parse(response.text);
+    if(text.HotelListResponse.HotelList) {
+      var hotels = text.HotelListResponse.HotelList.HotelSummary;
+      var HotelObject = Parse.Object.extend("Hotel");
+      console.log("hotels: " + hotels);
+      console.log("hotels length: " + hotels.length);
+      for(var i = 0; i < hotels.length; i++){
+        (function(hotelData) {
+          console.log(hotelData);
+          var hotelObject = new HotelObject();
+          hotelObject.set("hotelid", hotelData.hotelId);
+          hotelObject.set("city", randomCity);
+          hotelObject.set("name", hotelData.name);
+          hotelObject.set("locationDescription", hotelData.locationDescription);
+          hotelObject.set("shortDescription", hotelData.shortDescription);
+          hotelObject.set("deepLink", hotelData.deepLink);
+          var roomImageUrl = "http://api.ean.com/ean-services/rs/hotel/v3/roomImages?minorRev=28&cid=55505&apiKey=cbrzfta369qwyrm9t5b8y8kf&customerUserAgent=Mozilla/5.0+(Windows+NT+10.0;+WOW64)+AppleWebKit/537.36+(KHTML,+like+Gecko)+Chrome/43.0.2357.130+Safari/537.36&&customerIpAddress=10.187.20.19&customerSessionId=&xml=<HotelRoomImageRequest><hotelId>" + hotelData.hotelId + "</hotelId></HotelRoomImageRequest>";
+          
+          promises.push(Parse.Cloud.httpRequest({
+            url: roomImageUrl
+          }).then(function(response) {
+            var saveObjectPromises = [];
+            var text = JSON.parse(response.text);
+            console.log(text.HotelRoomImageResponse.RoomImages);
+            if(text.HotelRoomImageResponse.RoomImages) {
+              console.log(text.HotelRoomImageResponse.RoomImages.RoomImage.Length);
+              var images = text.HotelRoomImageResponse.RoomImages.RoomImage;
+              for(var j = 0; j < images.length; ++j) {
+                ++entriesSynced;
+                hotelObject.set("roomTypeCode", images[j].roomTypeCode);
+                hotelObject.set("roomImageUrl", images[j].url);
+                saveObjectPromises.push(hotelObject.save());
+              }
+            } else {
+              console.log("No image entries for hotel id: " + hotelData.hotelId);
+              console.log("Room image url: " + roomImageUrl);
+            }
+            return Parse.Promise.when(saveObjectPromises);
+          }, function(error) {
+            console.log("error getting http response from: " + roomImageUrl);
+          }));
+        })(hotels[i]);
+      }
+    } else {
+      cities.splice(randomCityIndex, 1);
+      console.log("No entries returned for city: " + randomCity);
+      console.log("query url: " + queryUrl);
+    }
+    return Parse.Promise.when(promises);
+  }, function(error) {
+    status.error("error getting http response from: " + queryUrl);
+  }).then(function() {
+    status.success("synced or updated " + entriesSynced + " entries");
+  });
+});
