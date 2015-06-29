@@ -6,18 +6,5 @@
         },
         "is_top_level": true,
         "variables": {}
-    },
-    "com.phonegap.plugins.facebookconnect": {
-        "source": {
-            "type": "git",
-            "url": "https://github.com/Wizcorp/phonegap-facebook-plugin.git",
-            "subdir": ".",
-            "ref": "develop"
-        },
-        "is_top_level": true,
-        "variables": {
-            "APP_ID": "499457133534807",
-            "APP_NAME": "Repiws"
-        }
     }
 }
