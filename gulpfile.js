@@ -8,36 +8,34 @@ var connect = require("gulp-connect");
 var concat = require("gulp-concat");
 var less = require("gulp-less");
 var sass = require("gulp-sass");
+var eventStream = require("event-stream");
 
 var paths = {
   scripts: ["src/js/**/*"],
   vendor: ["src/vendor/**/*"],
-  statics: ["src/*.html", "src/img/**/*", "src/css/**/*", "src/font/**/*"],
+  statics: ["src/*.html", "src/img/**/*", "src/font/**/*"],
+  css: ["src/css/**/*"],
   less: ["src/less/**/*"],
   sass: ["src/sass/**/*"]
 };
 
-gulp.task('less', function() {
-  gulp.src(paths.less)
-    .pipe(less({
-      paths: [path.join(__dirname, 'less', 'includes')]
-    }))
-    .pipe(gulp.dest('www/css'))
-    .pipe(connect.reload());
-});
+gulp.task('css', function() {
+  var css = gulp.src(paths.css).pipe(concat("index.css"));
+  var cssSass = gulp.src(paths.sass).pipe(sass.sync().on('error', sass.logError))
+  var cssLess = gulp.src(paths.less).pipe(less({
+    paths: [ path.join(__dirname, 'less', 'includes') ]
+  }));
 
-gulp.task("sass", function () {
-  gulp.src(paths.sass)
-    .pipe(sass().on('error', sass.logError))
-    .pipe(gulp.dest("www/css"))
+  return eventStream.concat(css, cssSass, cssLess)
+    .pipe(concat('index.css'))
+    .pipe(gulp.dest('www/css'))
     .pipe(connect.reload());
 });
 
 gulp.task("statics", function() {
   gulp.src(paths.statics, {
     base: "src"
-  })
-    .pipe(gulp.dest("www"));
+  }).pipe(gulp.dest("www"));
 });
 
 gulp.task("browserify", function() {
@@ -55,14 +53,15 @@ gulp.task("browserify", function() {
     .pipe(connect.reload());
 });
 
-gulp.task("default", ["less", "sass", "statics", "browserify"], function() {
+gulp.task("default", ["css", "statics", "browserify"], function() {
   connect.server({
     root: "www",
     livereload: true,
     port: 9000
   });
-  gulp.watch(paths.scripts, ["less", "sass", "statics", "browserify"]);
-  gulp.watch(paths.sass, ["less", "sass", "statics", "browserify"]);
-  gulp.watch(paths.statics, ["less", "sass", "statics", "browserify"]);
-  gulp.watch(paths.less, ["less", "sass", "statics", "browserify"]);
+  gulp.watch(paths.scipts, ["css", "statics", "browserify"]);
+  gulp.watch(paths.sass, ["css", "statics", "browserify"]);
+  gulp.watch(paths.statics, ["css", "statics", "browserify"]);
+  gulp.watch(paths.less, ["css", "statics", "browserify"]);
+  gulp.watch(paths.css, ["css", "statics", "browserify"]);
 });
