@@ -11,7 +11,8 @@ var less = require("gulp-less");
 var paths = {
   scripts: ["src/js/**/*"],
   vendor: ["src/vendor/**/*"],
-  statics: ["src/*.html", "src/img/**/*", "src/css/**/*", "src/font/**/*"]
+  statics: ["src/*.html", "src/img/**/*", "src/css/**/*", "src/font/**/*"],
+  less: ["src/less/**/*"]
 };
 
 gulp.task('less', function() {
@@ -56,8 +57,9 @@ gulp.task("default", ["less", "vendor", "statics", "browserify"], function() {
     root: "www",
     livereload: true,
     port: 9000
-  });  
+  });
   gulp.watch(paths.scripts, ["less", "vendor", "statics", "browserify"]);
   gulp.watch(paths.vendor, ["less", "vendor", "statics", "browserify"]);
   gulp.watch(paths.statics, ["less", "vendor", "statics", "browserify"]);
+  gulp.watch(paths.less, ["less", "vendor", "statics", "browserify"]);
 });

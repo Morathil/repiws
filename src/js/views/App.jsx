@@ -24,7 +24,8 @@ var zindex = {
 
 var contentStyle = {
   zIndex: 2,
-  position: "absolute"
+  position: "absolute",
+  right: "0px"
 }
 
 var Repiws = React.createClass({
@@ -39,7 +40,7 @@ var Repiws = React.createClass({
   showMenu: function() {
     this.refs.menu.show();
   },
-  
+
   showDeeperMenu: function() {
     this.refs.deeperMenu.show();
   },
@@ -56,17 +57,19 @@ var Repiws = React.createClass({
     return (
       <div style={height}>
         <div style={zindex}>
-          <button style={contentStyle} onClick={this.showMenu}>Show Menu!</button>
-          
+          <div style={contentStyle} onClick={this.showMenu}>
+            <i className="fa fa-bars fa-3x"></i>
+          </div>
+
           <Menu ref="menu" alignment="left" type="main-menu">
             {button}
             <MenuItem onClick={this.showDeeperMenu}>Deeper Menu</MenuItem>
           </Menu>
-          
+
           <Menu ref="deeperMenu" alignment="left" type="deeper-menu">
             <MenuItem>Option 1</MenuItem>
             <MenuItem>Option 2</MenuItem>
-            <MenuItem>Option 3</MenuItem>        
+            <MenuItem>Option 3</MenuItem>
           </Menu>
 
           <Deck />
