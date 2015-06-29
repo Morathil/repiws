@@ -7,16 +7,18 @@ var path = require('path');
 var connect = require("gulp-connect");
 var concat = require("gulp-concat");
 var less = require("gulp-less");
+var sass = require("gulp-sass");
 
 var paths = {
   scripts: ["src/js/**/*"],
   vendor: ["src/vendor/**/*"],
   statics: ["src/*.html", "src/img/**/*", "src/css/**/*", "src/font/**/*"],
-  less: ["src/less/**/*"]
+  less: ["src/less/**/*"],
+  sass: ["src/sass/**/*"]
 };
 
 gulp.task('less', function() {
-  gulp.src('src/less/**/*.less')
+  gulp.src(paths.less)
     .pipe(less({
       paths: [path.join(__dirname, 'less', 'includes')]
     }))
@@ -24,10 +26,11 @@ gulp.task('less', function() {
     .pipe(connect.reload());
 });
 
-gulp.task("vendor", function() {
-//  gulp.src(paths.vendor)
-//    .pipe(concat("vendor.js"))
-//    .pipe(gulp.dest("www/vendor"));
+gulp.task("sass", function () {
+  gulp.src(paths.sass)
+    .pipe(sass().on('error', sass.logError))
+    .pipe(gulp.dest("www/css"))
+    .pipe(connect.reload());
 });
 
 gulp.task("statics", function() {
@@ -52,14 +55,14 @@ gulp.task("browserify", function() {
     .pipe(connect.reload());
 });
 
-gulp.task("default", ["less", "vendor", "statics", "browserify"], function() {
+gulp.task("default", ["less", "sass", "statics", "browserify"], function() {
   connect.server({
     root: "www",
     livereload: true,
     port: 9000
   });
-  gulp.watch(paths.scripts, ["less", "vendor", "statics", "browserify"]);
-  gulp.watch(paths.vendor, ["less", "vendor", "statics", "browserify"]);
-  gulp.watch(paths.statics, ["less", "vendor", "statics", "browserify"]);
-  gulp.watch(paths.less, ["less", "vendor", "statics", "browserify"]);
+  gulp.watch(paths.scripts, ["less", "sass", "statics", "browserify"]);
+  gulp.watch(paths.sass, ["less", "sass", "statics", "browserify"]);
+  gulp.watch(paths.statics, ["less", "sass", "statics", "browserify"]);
+  gulp.watch(paths.less, ["less", "sass", "statics", "browserify"]);
 });

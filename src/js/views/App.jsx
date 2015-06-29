@@ -23,7 +23,7 @@ var zindex = {
 }
 
 var contentStyle = {
-  zIndex: 2,
+  zIndex: 10,
   position: "absolute",
   right: "0px"
 }
@@ -39,6 +39,16 @@ var Repiws = React.createClass({
 
   showMenu: function() {
     this.refs.menu.show();
+    this.setState({
+      isMenuActive: true
+    });
+  },
+
+  hideMenu: function() {
+    this.refs.menu.hide();
+    this.setState({
+      isMenuActive: false
+    });
   },
 
   showDeeperMenu: function() {
@@ -54,12 +64,15 @@ var Repiws = React.createClass({
     var logoutButton =  <MenuItem onClick={this._logout}>Logout</MenuItem>
     var button = this.state.currentUser ? logoutButton : loginButtons;
 
+    var isMenuActiveCss = this.state.isMenuActive ? "is-active" : null;
+    var clickAction = this.state.isMenuActive ? this.hideMenu : this.showMenu;
+
     return (
       <div style={height}>
         <div style={zindex}>
-          <div style={contentStyle} onClick={this.showMenu}>
-            <i className="fa fa-bars fa-3x"></i>
-          </div>
+          <button onClick={clickAction} style={contentStyle} className={"c-hamburger c-hamburger--htx " + isMenuActiveCss}>
+            <span>toggle menu</span>
+          </button>
 
           <Menu ref="menu" alignment="left" type="main-menu">
             {button}
