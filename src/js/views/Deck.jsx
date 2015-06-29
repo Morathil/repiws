@@ -4,6 +4,7 @@ var Swing = require("../components/swing.min");
 var ItemActions = require("../actions/ItemActions");
 var ItemStore = require("../stores/ItemStore");
 
+var ENV = require("../../../.env.json");
 
 var Deck = React.createClass({
   config: {
@@ -64,7 +65,7 @@ var Deck = React.createClass({
       <div id="viewport">
         <ul className="stack">
         {this.state.items.map(function(item, index) {
-          var backgroundUrl = item.get("imageUrl");
+          var backgroundUrl = item.get(ENV.IMAGE_URL);
           var bgi = {
             backgroundImage: "url(" + backgroundUrl + ")",
             backgroundSize: "cover"

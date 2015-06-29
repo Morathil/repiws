@@ -3,7 +3,10 @@
 var RSVP = require("rsvp");
 var parse = require("parse").Parse;
 var asEvented = require("asEvented");
+var ENV = require("../../../.env.json");
 
+var LIKE_RELATION = "likes" + ENV.OBJECT_ITEM_NAME;
+var DISLIKE_RELATION = "dislikes" + ENV.OBJECT_ITEM_NAME;
 
 var ParseUserUtils = function() {
   this._parse = parse;
@@ -67,7 +70,7 @@ var publicMethods = function() {
 
   this.getLikes = function() {
     var that = this;
-    return this._getRelation("likes")
+    return this._getRelation(LIKE_RELATION)
       .then(function(likes) {
         that.trigger("likes", likes);
       });
@@ -75,18 +78,18 @@ var publicMethods = function() {
 
   this.getDislikes = function() {
     var that = this;
-    return this._getRelation("dislikes")
+    return this._getRelation(DISLIKE_RELATION)
       .then(function(dislikes) {
         that.trigger("dislikes", dislikes);
       });
   };
 
   this.like = function(item) {
-    return this._setRelation("likes", item);
+    return this._setRelation(LIKE_RELATION, item);
   };
 
   this.dislike = function(item) {
-    return this._setRelation("dislikes", item);
+    return this._setRelation(DISLIKE_RELATION, item);
   };
 }
 

@@ -3,10 +3,11 @@
 var RSVP = require("rsvp");
 var parse = require("parse").Parse;
 var asEvented = require("asEvented");
+var ENV = require("../../../.env.json");
 
 var ParseObjectUtils = function() {
   this._parse = parse;
-  this._Item = this._parse.Object.extend("Item")
+  this._Item = this._parse.Object.extend(ENV.OBJECT_ITEM_NAME);
 }
 
 var publicMethods = function() {
