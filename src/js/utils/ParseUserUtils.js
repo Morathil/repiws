@@ -20,6 +20,10 @@ var publicMethods = function() {
     }
   };
 
+  this.current = function () {
+    return this._parse.User.current();
+  }
+
   this.signUp = function(userData) {
     var user = new this._parse.User();
     user.set("username", userData.userName);
@@ -73,6 +77,7 @@ var publicMethods = function() {
     return this._getRelation(LIKE_RELATION)
       .then(function(likes) {
         that.trigger("likes", likes);
+        return likes;
       });
   };
 
@@ -81,6 +86,7 @@ var publicMethods = function() {
     return this._getRelation(DISLIKE_RELATION)
       .then(function(dislikes) {
         that.trigger("dislikes", dislikes);
+        return dislikes;
       });
   };
 

@@ -1,6 +1,7 @@
 "use strict";
 
 var asEvented = require("asEvented");
+var RSVP = require("rsvp");
 
 var Dispatcher = require("./../dispatcher/Dispatcher");
 var ParseObjectUtils = require("./../utils/ParseObjectUtils");
@@ -36,11 +37,12 @@ var publicMethods = function() {
     var filteredItems = []
     for (var i = 0; i < this._items.length; i++) {
       var item = this._items[i];
-      if ((likeIds.indexOf(item.id) === -1 && dislikeIds.indexOf(item.id) === -1) && filteredItems.length <= MAX_DECK_SIZE) {
+      if ((likeIds.indexOf(item.id) === -1 && dislikeIds.indexOf(item.id) === -1) && filteredItems.length < MAX_DECK_SIZE) {
         filteredItems.push(item);
       }
     }
 
+    console.log(filteredItems.length);
     return filteredItems.reverse();
   };
 
@@ -57,20 +59,24 @@ var publicMethods = function() {
   };
 
   this.like = function(item) {
-    ParseUserUtils.like(item).then(function() {
-      ParseUserUtils.getLikes()
-    });
+    ParseUserUtils.like(item);
+    this._likes.push(item);
   };
 
   this.dislike = function(item) {
-    ParseUserUtils.getDislikes();
     ParseUserUtils.dislike(item);
+    this._dislikes.push(item);
   };
 
   this.fetch = function() {
-    ParseUserUtils.getLikes();
-    ParseUserUtils.getDislikes();
-    ParseObjectUtils.getAll();
+    var promises = [];
+    promises.push(ParseUserUtils.getLikes());
+    promises.push(ParseUserUtils.getDislikes());
+
+    var that = this;
+    RSVP.all(promises).then(function () {
+      ParseObjectUtils.getAll(that._likes, that._dislikes);
+    });
   };
 }
 
@@ -101,10 +107,12 @@ ItemStore.dispatchToken = Dispatcher.register(function(action) {
 
     case "item-like":
       ItemStore.like(action.data);
+      ItemStore.emitChange();
       break;
 
     case "item-dislike":
       ItemStore.dislike(action.data);
+      ItemStore.emitChange();
       break;
 
     case "user-loggedIn":

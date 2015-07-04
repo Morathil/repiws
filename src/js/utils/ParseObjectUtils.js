@@ -26,10 +26,22 @@ var publicMethods = function() {
     });
   };
 
-  this.getAll = function() {
+  this.getAll = function(likes, dislikes) {
     var query = new this._parse.Query(this._Item);
-    var that = this;
 
+    var likeIds = likes.map(function (like) {
+      return like.id;
+    });
+
+    var dislikeIds = dislikes.map(function (dislike) {
+      return dislike.id;
+    });
+
+    var queryIds = likeIds.concat(dislikeIds);
+
+    query.notContainedIn("objectId", queryIds);
+
+    var that = this;
     return new RSVP.Promise(function(resolve, reject) {
       query.find({
         success: resolve,

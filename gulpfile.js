@@ -11,8 +11,7 @@ var sass = require("gulp-sass");
 var eventStream = require("event-stream");
 
 var paths = {
-  scripts: ["src/js/**/*"],
-  vendor: ["src/vendor/**/*"],
+  scripts: ["src/js/**/*", "src/js/utils/*"],
   statics: ["src/*.html", "src/img/**/*", "src/font/**/*"],
   css: ["src/style/css/**/*"],
   less: ["src/style/less/**/*"],
@@ -28,14 +27,14 @@ gulp.task('css', function() {
 
   return eventStream.concat(css, cssSass, cssLess)
     .pipe(concat('index.css'))
-    .pipe(gulp.dest('www/css'))
-    .pipe(connect.reload());
+    .pipe(gulp.dest('www/css'));
 });
 
 gulp.task("statics", function() {
   gulp.src(paths.statics, {
     base: "src"
-  }).pipe(gulp.dest("www"));
+  }).pipe(gulp.dest("www"))
+  .pipe(connect.reload());
 });
 
 gulp.task("browserify", function() {
@@ -49,8 +48,7 @@ gulp.task("browserify", function() {
   });
 
   bundleStream.pipe(source("index.js"))
-    .pipe(gulp.dest("www/js"))
-    .pipe(connect.reload());
+    .pipe(gulp.dest("www/js"));
 });
 
 gulp.task("default", ["css", "statics", "browserify"], function() {
@@ -59,9 +57,9 @@ gulp.task("default", ["css", "statics", "browserify"], function() {
     livereload: true,
     port: 9000
   });
-  gulp.watch(paths.scipts, ["css", "statics", "browserify"]);
   gulp.watch(paths.sass, ["css", "statics", "browserify"]);
   gulp.watch(paths.statics, ["css", "statics", "browserify"]);
   gulp.watch(paths.less, ["css", "statics", "browserify"]);
   gulp.watch(paths.css, ["css", "statics", "browserify"]);
+  gulp.watch("./src/js/**/*", ["css", "statics", "browserify"]);
 });
