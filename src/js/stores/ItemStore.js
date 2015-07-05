@@ -82,8 +82,8 @@ var publicMethods = function() {
 var privateMethods = function() {
   this._isRequiredToFetchData = function () {
     return (this._items.length < MAX_DECK_SIZE);
-  }
-}
+  };
+};
 
 privateMethods.call(ItemStore.prototype);
 publicMethods.call(ItemStore.prototype);
