@@ -16,21 +16,21 @@ var publicMethods = function() {
   this.likes = function(likes) {
     Dispatcher.dispatch({
       type: "item-likes",
-      data: likes 
+      data: likes
     });
   },
 
   this.dislikes = function(dislikes) {
     Dispatcher.dispatch({
       type: "item-dislikes",
-      data: dislikes 
+      data: dislikes
     });
   },
 
   this.like = function(item) {
     Dispatcher.dispatch({
       type: "item-like",
-      data: item 
+      data: item
     });
   },
 
@@ -38,6 +38,12 @@ var publicMethods = function() {
     Dispatcher.dispatch({
       type: "item-dislike",
       data: item
+    });
+  },
+
+  this.refresh = function() {
+    Dispatcher.dispatch({
+      type: "item-refresh"
     });
   }
 }

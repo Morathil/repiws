@@ -6,6 +6,9 @@ var MenuSet = require("./SlidingMenu.jsx");
 var UserActions = require("./../actions/UserActions");
 var UserStore = require("./../stores/UserStore");
 
+var ItemActions = require("../actions/ItemActions");
+var ItemStore = require("../stores/ItemStore");
+
 var Menu = MenuSet.Menu;
 var MenuItem = MenuSet.MenuItem;
 var Deck = require("./Deck.jsx");
@@ -76,13 +79,7 @@ var Repiws = React.createClass({
 
           <Menu ref="menu" alignment="left" type="main-menu">
             {button}
-            <MenuItem onClick={this.showDeeperMenu}>Deeper Menu</MenuItem>
-          </Menu>
-
-          <Menu ref="deeperMenu" alignment="left" type="deeper-menu">
-            <MenuItem>Option 1</MenuItem>
-            <MenuItem>Option 2</MenuItem>
-            <MenuItem>Option 3</MenuItem>
+            <MenuItem onClick={this._refresh}>Refresh Data</MenuItem>
           </Menu>
 
           <Deck />
@@ -110,6 +107,10 @@ var Repiws = React.createClass({
     return {
       currentUser: UserStore.get()
     };
+  },
+
+  _refresh: function() {
+    ItemActions.refresh();
   },
 
   _onUserStoreChange: function() {

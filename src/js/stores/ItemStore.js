@@ -7,7 +7,7 @@ var Dispatcher = require("./../dispatcher/Dispatcher");
 var ParseObjectUtils = require("./../utils/ParseObjectUtils");
 var ParseUserUtils = require("./../utils/ParseUserUtils");
 
-var MAX_DECK_SIZE = 5;
+var MAX_DECK_SIZE = 2;
 
 var ItemStore = function() {
   this._likes = [];
@@ -42,7 +42,6 @@ var publicMethods = function() {
       }
     }
 
-    console.log(filteredItems.length);
     return filteredItems.reverse();
   };
 
@@ -74,13 +73,17 @@ var publicMethods = function() {
     promises.push(ParseUserUtils.getDislikes());
 
     var that = this;
-    RSVP.all(promises).then(function () {
+    RSVP.all(promises).then(function() {
       ParseObjectUtils.getAll(that._likes, that._dislikes);
     });
   };
 }
 
-var privateMethods = function() {}
+var privateMethods = function() {
+  this._isRequiredToFetchData = function () {
+    return (this._items.length < MAX_DECK_SIZE);
+  }
+}
 
 privateMethods.call(ItemStore.prototype);
 publicMethods.call(ItemStore.prototype);
@@ -89,6 +92,7 @@ asEvented.call(ItemStore.prototype);
 var ItemStore = new ItemStore();
 
 ItemStore.dispatchToken = Dispatcher.register(function(action) {
+  console.log(action.type);
   switch (action.type) {
     case "item-data":
       ItemStore.set(action.data);
@@ -108,6 +112,10 @@ ItemStore.dispatchToken = Dispatcher.register(function(action) {
     case "item-like":
       ItemStore.like(action.data);
       ItemStore.emitChange();
+      break;
+
+    case "item-refresh":
+      ItemStore.fetch();
       break;
 
     case "item-dislike":

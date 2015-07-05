@@ -13,7 +13,8 @@ var Deck = React.createClass({
       return confidence > 0.35 ? 1 : 0;
     },
     minThrowOutDistance: 2048,
-    maxThrowOutDistance: 2048
+    maxThrowOutDistance: 2048,
+    maxRotation: 0
 },
   cards: [],
   images: [],

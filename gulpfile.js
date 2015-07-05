@@ -11,7 +11,7 @@ var sass = require("gulp-sass");
 var eventStream = require("event-stream");
 
 var paths = {
-  scripts: ["src/js/**/*", "src/js/utils/*"],
+  scripts: ["./src/js/**/*"],
   statics: ["src/*.html", "src/img/**/*", "src/font/**/*"],
   css: ["src/style/css/**/*"],
   less: ["src/style/less/**/*"],
@@ -61,5 +61,5 @@ gulp.task("default", ["css", "statics", "browserify"], function() {
   gulp.watch(paths.statics, ["css", "statics", "browserify"]);
   gulp.watch(paths.less, ["css", "statics", "browserify"]);
   gulp.watch(paths.css, ["css", "statics", "browserify"]);
-  gulp.watch("./src/js/**/*", ["css", "statics", "browserify"]);
+  gulp.watch(paths.scripts, ["css", "statics", "browserify"]);
 });

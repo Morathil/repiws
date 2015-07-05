@@ -111,7 +111,7 @@ var privateMethods = function() {
     var user = this._parse.User.current();
     var relation = user.relation(relationName);
     return new RSVP.Promise(function(resolve, reject) {
-      relation.query().find({
+      relation.query().limit(1000).find({
         success: resolve,
         error: reject
       });
