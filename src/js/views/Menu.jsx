@@ -18,13 +18,13 @@ var Menu = React.createClass({
   },
 
   render: function() {
-    var sessionText = this.state.currentUser ? "Logout" : "Login";
+    var sessionText = this.state.currentUser ? "LOGOUT" : "LOGIN";
     var sessionAction = this.state.currentUser ? this._logout : this._login;
 
     return (
       <div className="menu-content">
         <ul>
-          <li onClick={this._refresh}>Refresh Data</li>
+          <li onClick={this._refresh}>REFRESH DATA</li>
           <li onClick={sessionAction}>{sessionText}</li>
         </ul>
       </div>
@@ -36,7 +36,6 @@ var Menu = React.createClass({
   },
 
   _login: function() {
-    console.log("CLICK");
     UserActions.login({
       userName: "1234",
       password: "1234"
