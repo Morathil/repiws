@@ -12,7 +12,7 @@ var eventStream = require("event-stream");
 
 var paths = {
   scripts: ["./src/js/**/*"],
-  statics: ["src/*.html", "src/img/**/*", "src/font/**/*"],
+  statics: ["src/*.html", "src/img/**/*", "src/fonts/**/*"],
   css: ["src/style/css/**/*"],
   less: ["src/style/less/**/*"],
   sass: ["src/style/sass/**/*"]

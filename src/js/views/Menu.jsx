@@ -20,11 +20,18 @@ var Menu = React.createClass({
   render: function() {
     var sessionText = this.state.currentUser ? "LOGOUT" : "LOGIN";
     var sessionAction = this.state.currentUser ? this._logout : this._login;
+    var sessionIcon = this.state.currentUser ? "fa-sign-out" : "fa-sign-in";
 
     return (
       <div className="menu-content">
-        <div onClick={sessionAction}>{sessionText}</div>
-        <div onClick={this._refresh}>REFRESH DATA</div>
+        <div onClick={sessionAction}>
+          <span>{sessionText}</span>
+          <i className={"fa " + sessionIcon + " fa-2x"}></i>
+        </div>
+        <div onClick={this._refresh}>
+          <span>REFRESH DATA</span>
+          <i className={"fa fa-cloud-download fa-2x"}></i>
+        </div>
       </div>
     );
   },

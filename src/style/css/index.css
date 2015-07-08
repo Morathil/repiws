@@ -60,11 +60,18 @@ body {
 }
 
 .menu-content>div {
+  text-align: right;
   padding: 15px;
   margin: 10px 0px 10px 0px;
   padding: 10px 0px 10px 0px;
+  position: relative;
 }
 
+.menu-content>div>span {
+  position: relative;
+  top: -5px;
+  padding-right: 10px;
+}
 
 /* COLOR SCHEME CAT */
 
