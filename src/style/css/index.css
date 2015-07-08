@@ -56,12 +56,23 @@ body {
   position: absolute;
   right: 5%;
   top: 10%;
+  font-size: 16px;
 }
 
-.menu-content>ul {
-  list-style: none;
-}
-
-.menu-content>ul>li {
+.menu-content>div {
   padding: 15px;
+  margin: 10px 0px 10px 0px;
+  padding: 10px 0px 10px 0px;
 }
+
+
+/* COLOR SCHEME CAT */
+
+.dark-primary-color    { background: #0288D1; }
+.default-primary-color { background: #03A9F4; }
+.light-primary-color   { background: #B3E5FC; }
+.text-primary-color    { color: #FFFFFF; }
+.accent-color          { background: #FF4081; }
+.primary-text-color    { color: #212121; }
+.secondary-text-color  { color: #727272; }
+.divider-color         { border-color: #B6B6B6; }

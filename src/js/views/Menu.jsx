@@ -23,10 +23,8 @@ var Menu = React.createClass({
 
     return (
       <div className="menu-content">
-        <ul>
-          <li onClick={this._refresh}>REFRESH DATA</li>
-          <li onClick={sessionAction}>{sessionText}</li>
-        </ul>
+        <div onClick={sessionAction}>{sessionText}</div>
+        <div onClick={this._refresh}>REFRESH DATA</div>
       </div>
     );
   },
