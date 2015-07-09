@@ -128,11 +128,13 @@ var cities = [
 ];
 
 var HotelObject = Parse.Object.extend("Hotel");
+var entriesCreated = 0;
+var entriesUpdated = 0;
 
-var saveEntry = function(imageData, hotelObject, images, imageIndex, entriesUpdated, hotelData, randomCity, entriesCreated, saveSuccess) {
+var saveEntry = function(imageData, hotelObject, images, imageIndex, hotelData, randomCity) {
   var query = new Parse.Query(HotelObject);
-  query.equalTo("hotelid", hotelObject.hotelid);
   query.equalTo("roomTypeCode", images[imageIndex].roomTypeCode);
+  query.equalTo("hotelId", hotelData.hotelId);
   query.limit(1);
   return query.find().then(function(results) {
     if (results.length > 0) {
@@ -151,14 +153,13 @@ var saveEntry = function(imageData, hotelObject, images, imageIndex, entriesUpda
   });
 };
 
-var queryRoomImages = function(response, hotelObject, entriesUpdated, hotelData, randomCity, entriesCreated, saveSuccess, roomImageUrl) {
+var queryRoomImages = function(response, hotelObject, hotelData, randomCity, roomImageUrl) {
   var text = JSON.parse(response.text);
   var queryPromises = [];
   if(text.HotelRoomImageResponse.RoomImages) {
     var images = text.HotelRoomImageResponse.RoomImages.RoomImage;
-    //images.length && console.log(images.length);
     for(var j = 0; j < images.length; ++j) {
-      var promise = saveEntry(images[j], hotelObject, images, j, entriesUpdated, hotelData, randomCity, entriesCreated, saveSuccess);
+      var promise = saveEntry(images[j], hotelObject, images, j, hotelData, randomCity);
       queryPromises.push(promise);
     }
   } else {
@@ -168,9 +169,9 @@ var queryRoomImages = function(response, hotelObject, entriesUpdated, hotelData,
   return Parse.Promise.when(queryPromises);
 };
 
-var storeHotelInfo = function(hotelData, promises, entriesUpdated, randomCity, entriesCreated, saveSuccess) {
+var storeHotelInfo = function(hotelData, promises, randomCity) {
   var hotelObject = new HotelObject();
-  hotelObject.set("hotelid", hotelData.hotelId);
+  hotelObject.set("hotelId", hotelData.hotelId);
   hotelObject.set("city", randomCity);
   hotelObject.set("name", hotelData.name);
   hotelObject.set("locationDescription", hotelData.locationDescription);
@@ -180,15 +181,13 @@ var storeHotelInfo = function(hotelData, promises, entriesUpdated, randomCity, e
   return Parse.Cloud.httpRequest({
     url: roomImageUrl
   }).then(function(response) {
-    return queryRoomImages(response, hotelObject, entriesUpdated, hotelData, randomCity, entriesCreated, saveSuccess, roomImageUrl);
+    return queryRoomImages(response, hotelObject, hotelData, randomCity, roomImageUrl);
   });
 };
 
 Parse.Cloud.job("SyncHotelData", function(request, status) {
-  var entriesCreated = 0;
-  var entriesUpdated = 0;
-  var saveSuccess = 0;
-  var saveFailed  = 0;
+  entriesCreated = 0;
+  entriesUpdated = 0;
   var randomCityIndex = Math.floor(Math.random()*cities.length);
   var randomCity = cities[randomCityIndex];
   var queryUrl = "http://api.ean.com/ean-services/rs/hotel/v3/list?cid=55505&minorRev=28&apiKey=cbrzfta369qwyrm9t5b8y8kf&locale=en_US&currencyCode=EUR&customerIpAddress=10.187.20.19&customerUserAgent=Mozilla/5.0+(Windows+NT+10.0;+WOW64)+AppleWebKit/537.36+(KHTML,+like+Gecko)+Chrome/43.0.2357.130+Safari/537.36&customerSessionId=&xml=<HotelListRequest><RoomGroup><Room><numberOfAdults>0</numberOfAdults></Room></RoomGroup><destinationString>" + randomCity + "</destinationString><numberOfResults>20</numberOfResults><minStarRating>3</minStarRating><maxStarRating>5</maxStarRating><propertyCategory>1</propertyCategory></HotelListRequest>";
@@ -202,7 +201,7 @@ Parse.Cloud.job("SyncHotelData", function(request, status) {
       console.log("hotels length: " + hotels.length);
       var maxLength = Math.min(hotels.length, 10);
       for(var i = 0; i < maxLength; i++){
-        promises.push(storeHotelInfo(hotels[i], promises, entriesUpdated, randomCity, entriesCreated, saveSuccess));
+        promises.push(storeHotelInfo(hotels[i], promises, randomCity));
       }
     } else {
       cities.splice(randomCityIndex, 1);
@@ -213,7 +212,6 @@ Parse.Cloud.job("SyncHotelData", function(request, status) {
   }, function(error) {
     status.error("error getting http response from: " + queryUrl);
   }).then(function() {
-    console.log("successfull saved " + saveSuccess + " entries and " + saveFailed + " failed save attempts");
     status.success("created " + entriesCreated + " and updated " + entriesUpdated + " entries");
   });
 });
