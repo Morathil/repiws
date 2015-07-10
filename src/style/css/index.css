@@ -83,3 +83,41 @@ body {
 .primary-text-color    { color: #212121; }
 .secondary-text-color  { color: #727272; }
 .divider-color         { border-color: #B6B6B6; }
+
+
+/* LOGIN */
+
+.login {
+  text-align: center;
+  position: relative;
+  top: 25%;
+}
+
+.login>input {
+  background-color: rgba(0,0,0,0.1);
+  border: 0px;
+  color: white;
+  margin: 5px 5px 5px 0px;
+  padding: 10px 10px 10px 10px;
+  font-size: 16px;
+}
+
+.login>i {
+  position: relative;
+  background-color: rgba(0,0,0,0.1);
+  top: 2px;
+  padding: 5px 0px 9px 7px;
+}
+
+::-webkit-input-placeholder { /* WebKit browsers */
+    color: white;
+}
+
+.loginButton {
+  background-color: rgba(0,0,0,0.1);
+  border: 0px;
+  color: white;
+  margin: 5px 5px 5px 0px;
+  padding: 10px 10px 11px 5px;
+  font-size: 16px;
+}

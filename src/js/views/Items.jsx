@@ -4,9 +4,11 @@ var Swing = require("../components/swing.min");
 var ItemActions = require("../actions/ItemActions");
 var ItemStore = require("../stores/ItemStore");
 
+var ViewActions = require("../actions/ViewActions");
+
 var ENV = require("../../../.env.json");
 
-var Deck = React.createClass({
+var Items = React.createClass({
   config: {
     throwOutConfidence: function (offset, element) {
       var confidence = Math.min(Math.abs(offset) / element.offsetWidth, 1);
@@ -71,7 +73,7 @@ var Deck = React.createClass({
             backgroundImage: "url(" + backgroundUrl + ")",
             backgroundSize: "cover"
           }
-          return <li style={bgi} key={backgroundUrl+index+new Date().getTime()}></li>
+          return <li onClick={that._showItem} style={bgi} key={backgroundUrl+index+new Date().getTime()}></li>
         })}
         </ul>
       </div>
@@ -91,7 +93,11 @@ var Deck = React.createClass({
 
   _onThrowOut: function(e) {
     ItemActions.like(this.state.items[this.state.items.length - 1]);
+  },
+
+  _showItem: function() {
+    ViewActions.showItem();
   }
 });
 
-module.exports = Deck;
+module.exports = Items;

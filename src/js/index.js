@@ -24,6 +24,7 @@ RSVP.on("error", function(error) {
 var Observer = require("./observers/Observer");
 var ItemStore = require("./stores/ItemStore");
 var UserStore = require("./stores/UserStore");
+var ViewStore = require("./stores/ViewStore");
 UserStore.initialize();
 
 // Initialize first root react component
