@@ -131,7 +131,7 @@ var HotelObject = Parse.Object.extend("Hotel");
 var entriesCreated = 0;
 var entriesUpdated = 0;
 
-var saveEntry = function(imageData, hotelObject, hotelData, randomCity) {
+var saveEntry = function(imageData, hotelObject, hotelData, randomCity, finalObjects) {
   var query = new Parse.Query(HotelObject);
   query.equalTo("roomTypeCode", imageData.roomTypeCode);
   query.equalTo("hotelId", hotelData.hotelId);
@@ -144,22 +144,22 @@ var saveEntry = function(imageData, hotelObject, hotelData, randomCity) {
       results[0].set("shortDescription", hotelData.shortDescription);
       results[0].set("deepLink", hotelData.deepLink);
       results[0].set("roomImageUrl", imageData.url);
-      return results[0].save().then(function() { ++entriesUpdated; }, function(error) { console.log(error); } );
+      finalObjects.push(results[0]);
     } else {
       hotelObject.set("roomTypeCode", imageData.roomTypeCode);
       hotelObject.set("roomImageUrl", imageData.url);
-      return hotelObject.save().then(function() { ++entriesCreated; }, function(error) { console.log(error); } );
+      finalObjects.push(hotelObject);
     }
   });
 };
 
-var queryRoomImages = function(response, hotelObject, hotelData, randomCity, roomImageUrl) {
+var queryRoomImages = function(response, hotelObject, hotelData, randomCity, roomImageUrl, finalObjects) {
   var text = JSON.parse(response.text);
   var queryPromises = [];
   if(text.HotelRoomImageResponse.RoomImages) {
     var images = text.HotelRoomImageResponse.RoomImages.RoomImage;
     for(var j = 0; j < images.length; ++j) {
-      var promise = saveEntry(images[j], hotelObject, hotelData, randomCity);
+      var promise = saveEntry(images[j], hotelObject, hotelData, randomCity, finalObjects);
       queryPromises.push(promise);
     }
   } else {
@@ -169,7 +169,7 @@ var queryRoomImages = function(response, hotelObject, hotelData, randomCity, roo
   return Parse.Promise.when(queryPromises);
 };
 
-var storeHotelInfo = function(hotelData, promises, randomCity) {
+var storeHotelInfo = function(hotelData, promises, randomCity, finalObjects) {
   var hotelObject = new HotelObject();
   hotelObject.set("hotelId", hotelData.hotelId);
   hotelObject.set("city", randomCity);
@@ -181,7 +181,7 @@ var storeHotelInfo = function(hotelData, promises, randomCity) {
   return Parse.Cloud.httpRequest({
     url: roomImageUrl
   }).then(function(response) {
-    return queryRoomImages(response, hotelObject, hotelData, randomCity, roomImageUrl);
+    return queryRoomImages(response, hotelObject, hotelData, randomCity, roomImageUrl, finalObjects);
   });
 };
 
@@ -195,20 +195,23 @@ Parse.Cloud.job("SyncHotelData", function(request, status) {
     url: queryUrl
   }).then(function(response) {
     var promises = [];
+    var finalObjects = [];
     var text = JSON.parse(response.text);
     if(text.HotelListResponse.HotelList) {
       var hotels = text.HotelListResponse.HotelList.HotelSummary;
       console.log("hotels length: " + hotels.length);
       var maxLength = Math.min(hotels.length, 20);
       for(var i = 0; i < maxLength; i++){
-        promises.push(storeHotelInfo(hotels[i], promises, randomCity));
+        promises.push(storeHotelInfo(hotels[i], promises, randomCity, finalObjects));
       }
     } else {
       cities.splice(randomCityIndex, 1);
       console.log("No entries returned for city: " + randomCity);
       console.log("query url: " + queryUrl);
     }
-    return Parse.Promise.when(promises);
+    return Parse.Promise.when(promises).then(function() {
+      return Parse.Object.saveAll(finalObjects).then(function() { entriesCreated = finalObjects.length; });
+    });
   }, function(error) {
     status.error("error getting http response from: " + queryUrl);
   }).then(function() {
