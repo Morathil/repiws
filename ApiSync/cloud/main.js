@@ -127,8 +127,67 @@ var cities = [
   "Hong Kong"
 ];
 
+var HotelObject = Parse.Object.extend("Hotel");
+var entriesCreated = 0;
+var entriesUpdated = 0;
+
+var saveEntry = function(imageData, hotelObject, hotelData, randomCity, finalObjects) {
+  var query = new Parse.Query(HotelObject);
+  query.equalTo("roomTypeCode", imageData.roomTypeCode);
+  query.equalTo("hotelId", hotelData.hotelId);
+  query.limit(1);
+  return query.find().then(function(results) {
+    if (results.length > 0) {
+      results[0].set("city", randomCity);
+      results[0].set("name", hotelData.name);
+      results[0].set("locationDescription", hotelData.locationDescription);
+      results[0].set("shortDescription", hotelData.shortDescription);
+      results[0].set("deepLink", hotelData.deepLink);
+      results[0].set("roomImageUrl", imageData.url);
+      finalObjects.push(results[0]);
+    } else {
+      hotelObject.set("roomTypeCode", imageData.roomTypeCode);
+      hotelObject.set("roomImageUrl", imageData.url);
+      finalObjects.push(hotelObject);
+    }
+  });
+};
+
+var queryRoomImages = function(response, hotelObject, hotelData, randomCity, roomImageUrl, finalObjects) {
+  var text = JSON.parse(response.text);
+  var queryPromises = [];
+  if(text.HotelRoomImageResponse.RoomImages) {
+    var images = text.HotelRoomImageResponse.RoomImages.RoomImage;
+    for(var j = 0; j < images.length; ++j) {
+      var promise = saveEntry(images[j], hotelObject, hotelData, randomCity, finalObjects);
+      queryPromises.push(promise);
+    }
+  } else {
+    console.log("No image entries for hotel id: " + hotelData.hotelId);
+    console.log("Room image url: " + roomImageUrl);
+  }
+  return Parse.Promise.when(queryPromises);
+};
+
+var storeHotelInfo = function(hotelData, promises, randomCity, finalObjects) {
+  var hotelObject = new HotelObject();
+  hotelObject.set("hotelId", hotelData.hotelId);
+  hotelObject.set("city", randomCity);
+  hotelObject.set("name", hotelData.name);
+  hotelObject.set("locationDescription", hotelData.locationDescription);
+  hotelObject.set("shortDescription", hotelData.shortDescription);
+  hotelObject.set("deepLink", hotelData.deepLink);
+  var roomImageUrl = "http://api.ean.com/ean-services/rs/hotel/v3/roomImages?minorRev=28&cid=55505&apiKey=cbrzfta369qwyrm9t5b8y8kf&customerUserAgent=Mozilla/5.0+(Windows+NT+10.0;+WOW64)+AppleWebKit/537.36+(KHTML,+like+Gecko)+Chrome/43.0.2357.130+Safari/537.36&&customerIpAddress=10.187.20.19&customerSessionId=&xml=<HotelRoomImageRequest><hotelId>" + hotelData.hotelId + "</hotelId></HotelRoomImageRequest>";
+  return Parse.Cloud.httpRequest({
+    url: roomImageUrl
+  }).then(function(response) {
+    return queryRoomImages(response, hotelObject, hotelData, randomCity, roomImageUrl, finalObjects);
+  });
+};
+
 Parse.Cloud.job("SyncHotelData", function(request, status) {
-  var entriesSynced = 0;
+  entriesCreated = 0;
+  entriesUpdated = 0;
   var randomCityIndex = Math.floor(Math.random()*cities.length);
   var randomCity = cities[randomCityIndex];
   var queryUrl = "http://api.ean.com/ean-services/rs/hotel/v3/list?cid=55505&minorRev=28&apiKey=cbrzfta369qwyrm9t5b8y8kf&locale=en_US&currencyCode=EUR&customerIpAddress=10.187.20.19&customerUserAgent=Mozilla/5.0+(Windows+NT+10.0;+WOW64)+AppleWebKit/537.36+(KHTML,+like+Gecko)+Chrome/43.0.2357.130+Safari/537.36&customerSessionId=&xml=<HotelListRequest><RoomGroup><Room><numberOfAdults>0</numberOfAdults></Room></RoomGroup><destinationString>" + randomCity + "</destinationString><numberOfResults>20</numberOfResults><minStarRating>3</minStarRating><maxStarRating>5</maxStarRating><propertyCategory>1</propertyCategory></HotelListRequest>";
@@ -136,58 +195,26 @@ Parse.Cloud.job("SyncHotelData", function(request, status) {
     url: queryUrl
   }).then(function(response) {
     var promises = [];
+    var finalObjects = [];
     var text = JSON.parse(response.text);
     if(text.HotelListResponse.HotelList) {
       var hotels = text.HotelListResponse.HotelList.HotelSummary;
-      var HotelObject = Parse.Object.extend("Hotel");
-      console.log("hotels: " + hotels);
       console.log("hotels length: " + hotels.length);
-      for(var i = 0; i < hotels.length; i++){
-        (function(hotelData) {
-          console.log(hotelData);
-          var hotelObject = new HotelObject();
-          hotelObject.set("hotelid", hotelData.hotelId);
-          hotelObject.set("city", randomCity);
-          hotelObject.set("name", hotelData.name);
-          hotelObject.set("locationDescription", hotelData.locationDescription);
-          hotelObject.set("shortDescription", hotelData.shortDescription);
-          hotelObject.set("deepLink", hotelData.deepLink);
-          var roomImageUrl = "http://api.ean.com/ean-services/rs/hotel/v3/roomImages?minorRev=28&cid=55505&apiKey=cbrzfta369qwyrm9t5b8y8kf&customerUserAgent=Mozilla/5.0+(Windows+NT+10.0;+WOW64)+AppleWebKit/537.36+(KHTML,+like+Gecko)+Chrome/43.0.2357.130+Safari/537.36&&customerIpAddress=10.187.20.19&customerSessionId=&xml=<HotelRoomImageRequest><hotelId>" + hotelData.hotelId + "</hotelId></HotelRoomImageRequest>";
-          
-          promises.push(Parse.Cloud.httpRequest({
-            url: roomImageUrl
-          }).then(function(response) {
-            var saveObjectPromises = [];
-            var text = JSON.parse(response.text);
-            console.log(text.HotelRoomImageResponse.RoomImages);
-            if(text.HotelRoomImageResponse.RoomImages) {
-              console.log(text.HotelRoomImageResponse.RoomImages.RoomImage.Length);
-              var images = text.HotelRoomImageResponse.RoomImages.RoomImage;
-              for(var j = 0; j < images.length; ++j) {
-                ++entriesSynced;
-                hotelObject.set("roomTypeCode", images[j].roomTypeCode);
-                hotelObject.set("roomImageUrl", images[j].url);
-                saveObjectPromises.push(hotelObject.save());
-              }
-            } else {
-              console.log("No image entries for hotel id: " + hotelData.hotelId);
-              console.log("Room image url: " + roomImageUrl);
-            }
-            return Parse.Promise.when(saveObjectPromises);
-          }, function(error) {
-            console.log("error getting http response from: " + roomImageUrl);
-          }));
-        })(hotels[i]);
+      var maxLength = Math.min(hotels.length, 20);
+      for(var i = 0; i < maxLength; i++){
+        promises.push(storeHotelInfo(hotels[i], promises, randomCity, finalObjects));
       }
     } else {
       cities.splice(randomCityIndex, 1);
       console.log("No entries returned for city: " + randomCity);
       console.log("query url: " + queryUrl);
     }
-    return Parse.Promise.when(promises);
+    return Parse.Promise.when(promises).then(function() {
+      return Parse.Object.saveAll(finalObjects).then(function() { entriesCreated = finalObjects.length; });
+    });
   }, function(error) {
     status.error("error getting http response from: " + queryUrl);
   }).then(function() {
-    status.success("synced or updated " + entriesSynced + " entries");
+    status.success("created " + entriesCreated + " and updated " + entriesUpdated + " entries");
   });
 });
