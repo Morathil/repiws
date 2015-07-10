@@ -131,10 +131,10 @@ var HotelObject = Parse.Object.extend("Hotel");
 var entriesCreated = 0;
 var entriesUpdated = 0;
 
-var saveEntry = function(imageData, hotelObject, images, imageIndex, hotelData, randomCity) {
+var saveEntry = function(imageData, hotelObject, hotelData, randomCity) {
   var query = new Parse.Query(HotelObject);
-  query.equalTo("roomTypeCode", images[imageIndex].roomTypeCode);
-  query.equalTo("hotelId", hotelData.hotelId);
+  query.equalTo("roomTypeCode", imageData.roomTypeCode);
+  //query.equalTo("hotelId", hotelData.hotelId);
   query.limit(1);
   return query.find().then(function(results) {
     if (results.length > 0) {
@@ -148,7 +148,7 @@ var saveEntry = function(imageData, hotelObject, images, imageIndex, hotelData, 
     } else {
       hotelObject.set("roomTypeCode", imageData.roomTypeCode);
       hotelObject.set("roomImageUrl", imageData.url);
-      return hotelObject.save().then(function() { ++entriesCreated; }, function(error) { console.log(error); } );
+      return hotelObject.save().then(function() { console.log("stored object: " + hotelData.hotelId + imageData.roomTypeCode); ++entriesCreated; }, function(error) { console.log(error); } );
     }
   });
 };
@@ -159,7 +159,7 @@ var queryRoomImages = function(response, hotelObject, hotelData, randomCity, roo
   if(text.HotelRoomImageResponse.RoomImages) {
     var images = text.HotelRoomImageResponse.RoomImages.RoomImage;
     for(var j = 0; j < images.length; ++j) {
-      var promise = saveEntry(images[j], hotelObject, images, j, hotelData, randomCity);
+      var promise = saveEntry(images[j], hotelObject, hotelData, randomCity);
       queryPromises.push(promise);
     }
   } else {
@@ -199,7 +199,7 @@ Parse.Cloud.job("SyncHotelData", function(request, status) {
     if(text.HotelListResponse.HotelList) {
       var hotels = text.HotelListResponse.HotelList.HotelSummary;
       console.log("hotels length: " + hotels.length);
-      var maxLength = Math.min(hotels.length, 10);
+      var maxLength = Math.min(hotels.length, 2);
       for(var i = 0; i < maxLength; i++){
         promises.push(storeHotelInfo(hotels[i], promises, randomCity));
       }
