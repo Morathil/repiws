@@ -14,6 +14,10 @@ var Login = React.createClass({
     UserStore.on("change", this._onUserStoreChange);
   },
 
+  componentWillUnmount: function() {
+    UserStore.off("change", this._onUserStoreChange);
+  },
+
   render: function() {
     return (
       <div className="login">
@@ -34,7 +38,6 @@ var Login = React.createClass({
   },
 
   _login: function() {
-    console.log(this.state.username);
     UserActions.login({
       userName: this.state.username,
       password: this.state.password
