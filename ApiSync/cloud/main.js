@@ -131,25 +131,30 @@ var HotelObject = Parse.Object.extend("Hotel");
 var entriesCreated = 0;
 var entriesUpdated = 0;
 
+var setObjectData = function(results, randomCity, hotelData, imageData, roomImageUrl, hotelObject, finalObjects) {
+  if (results.length > 0) {
+    results[0].set("city", randomCity);
+    results[0].set("name", hotelData.name);
+    results[0].set("locationDescription", hotelData.locationDescription);
+    results[0].set("shortDescription", hotelData.shortDescription);
+    results[0].set("deepLink", hotelData.deepLink);
+    results[0].set("roomImageUrl", roomImageUrl);
+    finalObjects.push(results[0]);
+  } else {
+    hotelObject.set("roomTypeCode", imageData.roomTypeCode)
+    hotelObject.set("roomImageUrl", roomImageUrl);
+    finalObjects.push(hotelObject);
+  }
+};
+
 var saveEntry = function(imageData, hotelObject, hotelData, randomCity, finalObjects) {
   var query = new Parse.Query(HotelObject);
   query.equalTo("roomTypeCode", imageData.roomTypeCode);
   query.equalTo("hotelId", hotelData.hotelId);
   query.limit(1);
   return query.find().then(function(results) {
-    if (results.length > 0) {
-      results[0].set("city", randomCity);
-      results[0].set("name", hotelData.name);
-      results[0].set("locationDescription", hotelData.locationDescription);
-      results[0].set("shortDescription", hotelData.shortDescription);
-      results[0].set("deepLink", hotelData.deepLink);
-      results[0].set("roomImageUrl", imageData.url);
-      finalObjects.push(results[0]);
-    } else {
-      hotelObject.set("roomTypeCode", imageData.roomTypeCode);
-      hotelObject.set("roomImageUrl", imageData.url);
-      finalObjects.push(hotelObject);
-    }
+    var roomImageUrl = imageData.url.substr(0, imageData.url.length - 1 - 4) + "z.jpg";
+    setObjectData(results, randomCity, hotelData, imageData, roomImageUrl, hotelObject, finalObjects);
   });
 };
 
