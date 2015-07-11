@@ -1,5 +1,6 @@
 var React = require("react");
-var Swing = require("../components/swing.min");
+// var Swing = require("../components/swing.min");
+var Swing = require("../vendor/swing/swing");
 
 var ItemActions = require("../actions/ItemActions");
 var ItemStore = require("../stores/ItemStore");

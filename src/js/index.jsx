@@ -1,5 +1,10 @@
 "use strict";
 
+require("../style/css/index.css");
+require("../style/css/stack.css");
+require("../style/sass/sass.scss")
+require("font-awesome-webpack");
+
 var ENV = require("../../.env.json");
 
 // Npm requires
