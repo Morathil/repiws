@@ -1,5 +1,6 @@
 "use strict";
 
+require("file?name=[path][name].[ext]&context=./src!../index.html");
 require("../style/css/index.css");
 require("../style/css/stack.css");
 require("../style/sass/sass.scss")
