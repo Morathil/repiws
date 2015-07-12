@@ -5,8 +5,28 @@ var React = require("react");
 var UserActions = require("./../actions/UserActions");
 var ItemActions = require("../actions/ItemActions");
 
+var UserStore = require("./../stores/UserStore");
+
 var Menu = React.createClass({
+  getInitialState: function() {
+    return {
+      currentUser: UserStore.get()
+    };
+  },
+
+  componentWillMount: function() {
+    UserStore.on("change", this._onUserStoreChange);
+  },
+
+  componentWillUnmount: function() {
+    UserStore.off("change", this._onUserStoreChange);
+  },
+
   render: function() {
+    if (!this.state.currentUser) {
+      return null;
+    }
+
     return (
       <div className="menu-content">
         <div onClick={this._logout}>
@@ -27,6 +47,12 @@ var Menu = React.createClass({
 
   _refresh: function() {
     ItemActions.refresh();
+  },
+
+  _onUserStoreChange: function() {
+    this.setState({
+      currentUser: UserStore.get()
+    });
   }
 });
 

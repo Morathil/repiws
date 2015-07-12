@@ -12,6 +12,19 @@ var publicMethods = function() {
       data: item
     });
   };
+
+  this.showItems = function() {
+    Dispatcher.dispatch({
+      type: "view-show-items"
+    });
+  };
+
+  this.setMenu = function(isActive) {
+    Dispatcher.dispatch({
+      type: "view-set-menu",
+      data: isActive
+    });
+  };
 }
 
 publicMethods.call(UserActions.prototype);

@@ -45,6 +45,21 @@ var publicMethods = function() {
     return filteredItems.reverse();
   };
 
+/*
+  this.getItem = function(id) {
+    var itemIds = this._items.map(function(item) {
+      return item.id;
+    });
+
+    var index = itemIds.indexOf(id);
+    if (index !== -1) {
+      return this._items[index];
+    }
+
+    return null;
+  };
+*/
+
   this.setLikes = function(likes) {
     this._likes = likes;
   };

@@ -74,7 +74,7 @@ var Items = React.createClass({
             backgroundImage: "url(" + backgroundUrl + ")",
             backgroundSize: "cover"
           }
-          return <li onClick={that._showItem} style={bgi} key={backgroundUrl+index+new Date().getTime()}></li>
+          return <li onClick={that._showItem.bind(that, item)} style={bgi} key={backgroundUrl+index+new Date().getTime()}></li>
         })}
         </ul>
       </div>
@@ -96,8 +96,8 @@ var Items = React.createClass({
     ItemActions.like(this.state.items[this.state.items.length - 1]);
   },
 
-  _showItem: function() {
-    ViewActions.showItem();
+  _showItem: function(item) {
+    ViewActions.showItem(item);
   }
 });
 

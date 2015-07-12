@@ -7,7 +7,11 @@ var Dispatcher = require("./../dispatcher/Dispatcher");
 // TODO: Outsource possible views: Login, Items, ItemShow
 
 var ViewStore = function() {
-  this._currentView = "Login";
+  this._currentView = {
+      view: "Login"
+  };
+
+  this._isMenuActive = false;
 }
 
 var publicMethods = function() {
@@ -19,9 +23,20 @@ var publicMethods = function() {
     return this._currentView;
   };
 
-  this.set = function(view, data) {
-    this._currentView = view;
+  this.getMenu = function() {
+    return this._isMenuActive;
   };
+
+  this.set = function(view, data) {
+    this._currentView = {
+      view: view,
+      data: data
+    };
+  };
+
+  this.setMenu = function(isActive) {
+    this._isMenuActive = isActive;
+  }
 }
 
 var privateMethods = function() {}
@@ -39,6 +54,16 @@ ViewStore.dispatchToken = Dispatcher.register(function(action) {
       ViewStore.emitChange();
       break;
 
+    case "view-show-items":
+      ViewStore.set("Items");
+      ViewStore.emitChange();
+      break;
+
+    case "view-set-menu":
+      ViewStore.setMenu(action.data);
+      ViewStore.emitChange();
+      break;
+
     case "user-loggedIn":
       ViewStore.set("Items");
       ViewStore.emitChange();
@@ -46,6 +71,7 @@ ViewStore.dispatchToken = Dispatcher.register(function(action) {
 
     case "user-loggedOut":
       ViewStore.set("Login");
+      ViewStore.setMenu(false);
       ViewStore.emitChange();
       break;
   }

@@ -162,7 +162,10 @@ $button-transistion-duration: 0.3s;     // The transition duration
  */
 
 .c-hamburger--htla {
-  background-color: rgb(50,220,100);
+  /*
+    background-color: rgb(50,220,100);
+  */
+  background-color: rgb(255,50,100);
 }
 
 .c-hamburger--htla span {
@@ -187,7 +190,11 @@ $button-transistion-duration: 0.3s;     // The transition duration
 /* active state, i.e. menu open */
 
 .c-hamburger--htla.is-active {
+  /*
   background-color: darken(rgb(50,220,100), 20%);
+  */
+
+  background-color: darken(rgb(255,50,100), 20%);
 }
 
 .c-hamburger--htla.is-active span {

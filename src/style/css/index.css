@@ -37,6 +37,13 @@ body {
 .burger-menu {
   z-index: 10;
   position: absolute !important;
+}
+
+.burger-menu.left {
+  left: 0px !important;
+}
+
+.burger-menu.right {
   right: 0px !important;
 }
 
