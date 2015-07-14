@@ -154,7 +154,23 @@ var saveEntry = function(imageData, hotelObject, hotelData, randomCity, finalObj
   query.limit(1);
   return query.find().then(function(results) {
     var roomImageUrl = imageData.url.substr(0, imageData.url.length - 1 - 4) + "z.jpg";
-    setObjectData(results, randomCity, hotelData, imageData, roomImageUrl, hotelObject, finalObjects);
+    return Parse.Cloud.httpRequest({
+      url: roomImageUrl
+    }).then(function(response) {
+      if (response.status == 200) {
+        var promise = Parse.Promise.as();
+        return promise.then(function() {
+          setObjectData(results, randomCity, hotelData, imageData, roomImageUrl, hotelObject, finalObjects);
+        });
+      } else {
+        console.log("Image in the specified resolution doesn't exist: " + roomImageUrl);
+      }
+    }, function(error) {
+      console.log("error retrieving large image");
+      console.log("error: " + error);
+      console.log("url: " + roomImageUrl);
+      return Parse.Promise.as();
+    });
   });
 };
 
@@ -187,6 +203,11 @@ var storeHotelInfo = function(hotelData, promises, randomCity, finalObjects) {
     url: roomImageUrl
   }).then(function(response) {
     return queryRoomImages(response, hotelObject, hotelData, randomCity, roomImageUrl, finalObjects);
+  }, function(error) {
+    console.log("error retrieving room images");
+    console.log("error: " + error);
+    console.log("url: " + roomImageUrl);
+    return Parse.Promise.as();
   });
 };
 
@@ -214,9 +235,12 @@ Parse.Cloud.job("SyncHotelData", function(request, status) {
       console.log("No entries returned for city: " + randomCity);
       console.log("query url: " + queryUrl);
     }
-    return Parse.Promise.when(promises).then(function() {
-      return Parse.Object.saveAll(finalObjects).then(function() { entriesCreated = finalObjects.length; });
+    console.log("promises length: " + promises.length);
+    var promise = Parse.Promise.when(promises).then(function() {
+      console.log("all data retrieved - now saving objects in database");
+      return Parse.Object.saveAll(finalObjects).then(function() { console.log("objects saved"); entriesCreated = finalObjects.length; });
     });
+    return Parse.Promise.when(promise);
   }, function(error) {
     status.error("error getting http response from: " + queryUrl);
   }).then(function() {
