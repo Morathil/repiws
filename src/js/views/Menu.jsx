@@ -4,6 +4,7 @@ var React = require("react");
 
 var UserActions = require("./../actions/UserActions");
 var ItemActions = require("../actions/ItemActions");
+var ViewActions = require("../actions/ViewActions");
 
 var UserStore = require("./../stores/UserStore");
 
@@ -33,6 +34,14 @@ var Menu = React.createClass({
           <span>LOGOUT</span>
           <i className={"fa fa-sign-out fa-2x"}></i>
         </div>
+        <div onClick={this._showItems}>
+          <span>ITEMS</span>
+          <i className={"fa fa-cloud-download fa-2x"}></i>
+        </div>
+        <div onClick={this._showLikes}>
+          <span>LIKES</span>
+          <i className={"fa fa-cloud-download fa-2x"}></i>
+        </div>
         <div onClick={this._refresh}>
           <span>REFRESH DATA</span>
           <i className={"fa fa-cloud-download fa-2x"}></i>
@@ -47,6 +56,14 @@ var Menu = React.createClass({
 
   _refresh: function() {
     ItemActions.refresh();
+  },
+
+  _showLikes: function() {
+    ViewActions.showLikes();
+  },
+
+  _showItems: function() {
+    ViewActions.showItems();
   },
 
   _onUserStoreChange: function() {

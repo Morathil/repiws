@@ -7,6 +7,7 @@ var Items = require("./Items.jsx");
 var ItemShow = require("./ItemShow.jsx");
 var Login = require("./Login.jsx");
 var BurgerMenu = require("./BurgerMenu.jsx");
+var Likes = require("./Likes.jsx");
 
 var ViewActions = require("../actions/ViewActions");
 var ViewStore = require("../stores/ViewStore");
@@ -14,7 +15,8 @@ var ViewStore = require("../stores/ViewStore");
 var VIEWS = {
   Login: Login,
   Items: Items,
-  ItemShow: ItemShow
+  ItemShow: ItemShow,
+  Likes: Likes
 }
 
 var Repiws = React.createClass({

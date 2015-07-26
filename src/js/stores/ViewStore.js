@@ -59,6 +59,11 @@ ViewStore.dispatchToken = Dispatcher.register(function(action) {
       ViewStore.emitChange();
       break;
 
+    case "view-show-likes":
+      ViewStore.set("Likes");
+      ViewStore.emitChange();
+      break;
+
     case "view-set-menu":
       ViewStore.setMenu(action.data);
       ViewStore.emitChange();

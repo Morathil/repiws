@@ -128,3 +128,27 @@ body {
   padding: 10px 10px 11px 5px;
   font-size: 16px;
 }
+
+/* LIKES SHOW ITEM*/
+
+.likes-show {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+}
+
+.likes-show-item {
+  position: relative;
+  width: 100%;
+  height: 25%;
+  border-bottom: 1px solid white;
+}
+
+.likes-show-item-information {
+  position: absolute;
+  bottom: 15px;
+  left: 15px;
+  font-size: 20px;
+  text-shadow: 1px 1px black;
+}

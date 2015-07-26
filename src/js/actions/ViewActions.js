@@ -25,6 +25,12 @@ var publicMethods = function() {
       data: isActive
     });
   };
+
+  this.showLikes = function() {
+    Dispatcher.dispatch({
+      type: "view-show-likes"
+    });
+  };
 }
 
 publicMethods.call(UserActions.prototype);
