@@ -24,16 +24,18 @@ var publicMethods = function() {
     return this._parse.User.current();
   }
 
-  this.signUp = function(userData) {
+  this.register = function(userData) {
     var user = new this._parse.User();
     user.set("username", userData.userName);
     user.set("password", userData.password);
-    user.set("email", userData.email);
 
+    var that = this;
     return new RSVP.Promise(function(resolve, reject) {
       user.signUp(null, {
         success: resolve,
         error: reject
+      }).then(function(user) {
+        that.trigger("registered", user);
       });
     });
   };

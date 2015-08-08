@@ -6,6 +6,19 @@ var Dispatcher = require("./../dispatcher/Dispatcher");
 var UserActions = function() {}
 
 var publicMethods = function() {
+  this.back = function(view) {
+    Dispatcher.dispatch({
+      type: "view-back",
+      data: view
+    });
+  };
+
+  this.showRegister = function() {
+    Dispatcher.dispatch({
+      type: "view-show-register"
+    });
+  };
+
   this.showItem = function(item) {
     Dispatcher.dispatch({
       type: "view-show-item",

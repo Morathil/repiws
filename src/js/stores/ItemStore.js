@@ -138,6 +138,7 @@ ItemStore.dispatchToken = Dispatcher.register(function(action) {
       ItemStore.emitChange();
       break;
 
+    case "user-registered":
     case "user-loggedIn":
       ItemStore.fetch();
       break;

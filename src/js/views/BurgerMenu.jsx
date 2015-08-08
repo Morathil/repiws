@@ -7,13 +7,13 @@ var UserStore = require("../stores/UserStore");
 
 var BurgerMenu = React.createClass({
   propTypes: {
-    style: React.PropTypes.string.isRequired
+    style: React.PropTypes.string.isRequired,
+    backView: React.PropTypes.string
   },
 
   getInitialState: function() {
     return {
-      isMenuActive: ViewStore.getMenu(),
-      currentUser: UserStore.get()
+      isMenuActive: ViewStore.getMenu()
     };
   },
 
@@ -28,10 +28,7 @@ var BurgerMenu = React.createClass({
   },
 
   render: function() {
-    if (!this.state.currentUser) {
-      return null;
-    }
-
+    console.log("RENDER");
     var clickAction = this.state.isMenuActive ? this._hideMenu : this._showMenu;
     var burgerMenuActiveCss = this.state.isMenuActive ? "is-active" : "";
     var style = "c-hamburger--htx";
@@ -41,7 +38,7 @@ var BurgerMenu = React.createClass({
       style = "c-hamburger--htla";
       align = "left";
       burgerMenuActiveCss = "is-active";
-      clickAction = ViewActions.showItems;
+      clickAction = ViewActions.back.bind(this, this.props.backView);
     }
 
     return (

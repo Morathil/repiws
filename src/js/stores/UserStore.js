@@ -23,6 +23,10 @@ var publicMethods = function() {
     return this._currentUser;
   };
 
+  this.register = function(registerData) {
+    ParseUserUtils.register(registerData);
+  };
+
   this.login = function(loginData) {
     ParseUserUtils.logIn(loginData);
   };
@@ -54,6 +58,10 @@ var UserStore = new UserStore();
 
 UserStore.dispatchToken = Dispatcher.register(function(action) {
   switch (action.type) {
+    case "user-register":
+      UserStore.register(action.data);
+      break;
+
     case "user-login":
       UserStore.login(action.data);
       break;
@@ -62,6 +70,7 @@ UserStore.dispatchToken = Dispatcher.register(function(action) {
       UserStore.facebookLogin();
       break;
 
+    case "user-registered":
     case "user-loggedIn":
       UserStore.loggedIn(action.data);
       UserStore.emitChange();

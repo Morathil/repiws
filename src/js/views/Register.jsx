@@ -5,9 +5,9 @@ var React = require("react");
 var UserActions = require("./../actions/UserActions");
 var UserStore = require("./../stores/UserStore");
 
-var ViewActions = require("../actions/ViewActions");
+var BurgerMenu = require("./BurgerMenu.jsx");
 
-var Login = React.createClass({
+var Register = React.createClass({
   getInitialState: function() {
     return this._getData()
   },
@@ -23,33 +23,27 @@ var Login = React.createClass({
   render: function() {
     return (
       <div className="login">
+        <BurgerMenu style="back" backView={"Login"} />
         <i className={"fa fa-user fa-2x"}></i>
         <input type="text" placeholder="Username" onChange={this._onUsername} />
         <br />
         <i className={"fa fa-lock fa-2x"}></i>
         <input type="password" placeholder="Password" onChange={this._onPassword} />
         <br />
-        <i className={"fa fa-sign-in fa-2x"}></i>
-        <span onClick={this._login} className="loginButton"> LOGIN</span>
+        <i className={"fa fa-lock fa-2x"}></i>
+        <input type="password" placeholder="Repeat password" onChange={this._onPassword} />
+        <br />
         <i className={"fa fa-sign-in fa-2x"}></i>
         <span onClick={this._register} className="loginButton"> REGISTER</span>
       </div>
     );
   },
 
-  _facebookLogin: function() {
-    UserActions.facebookLogin();
-  },
-
-  _login: function() {
-    UserActions.login({
+  _register: function() {
+    UserActions.register({
       userName: this.state.username,
       password: this.state.password
     });
-  },
-
-  _register: function() {
-    ViewActions.showRegister();
   },
 
   _getData: function() {
@@ -75,4 +69,4 @@ var Login = React.createClass({
   }
 });
 
-module.exports = Login;
+module.exports = Register;

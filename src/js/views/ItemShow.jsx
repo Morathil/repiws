@@ -36,7 +36,7 @@ var ItemShow = React.createClass({
   render: function() {
     return (
       <div style={fullscreen}>
-        <BurgerMenu style="back" />
+        <BurgerMenu style="back" backView={"Items"} />
         ITEM SHOW:
         {this.props.item.get(ENV.IMAGE_URL)}
         <Iframe style={fullscreen} className={"deepLinkIFrame"} src={this.props.item.get("deepLink")}/>

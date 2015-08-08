@@ -16,12 +16,13 @@ var privateMethods = function() {
   this._initListeners = function() {
     ParseObjectUtils.on("data", ItemActions.data);
 
+    ParseUserUtils.on("registered", UserActions.registered);
     ParseUserUtils.on("likes", ItemActions.likes);
     ParseUserUtils.on("dislikes", ItemActions.dislikes);
     ParseUserUtils.on("loggedIn", UserActions.loggedIn);
     ParseUserUtils.on("loggedOut", UserActions.loggedOut);
   };
-} 
+}
 
 privateMethods.call(Observer.prototype);
 asEvented.call(Observer.prototype);

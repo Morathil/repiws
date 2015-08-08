@@ -23,6 +23,10 @@ var publicMethods = function() {
     return this._currentView;
   };
 
+  this.back = function(view) {
+    this.set(view);
+  };
+
   this.getMenu = function() {
     return this._isMenuActive;
   };
@@ -64,11 +68,22 @@ ViewStore.dispatchToken = Dispatcher.register(function(action) {
       ViewStore.emitChange();
       break;
 
+    case "view-show-register":
+      ViewStore.set("Register");
+      ViewStore.emitChange();
+      break;
+
     case "view-set-menu":
       ViewStore.setMenu(action.data);
       ViewStore.emitChange();
       break;
 
+    case "view-back":
+      ViewStore.back(action.data);
+      ViewStore.emitChange();
+      break;
+
+    case "user-registered":
     case "user-loggedIn":
       ViewStore.set("Items");
       ViewStore.emitChange();

@@ -36,7 +36,7 @@ body {
 /* move item to the right */
 .burger-menu {
   z-index: 10;
-  position: absolute !important;
+  position: fixed !important;
 }
 
 .burger-menu.left {
