@@ -9,6 +9,7 @@ var Login = require("./Login.jsx");
 var BurgerMenu = require("./BurgerMenu.jsx");
 var Likes = require("./Likes.jsx");
 var Register = require("./Register.jsx");
+import UserDataForm from "./UserDataForm.jsx";
 
 var ViewActions = require("../actions/ViewActions");
 var ViewStore = require("../stores/ViewStore");
@@ -20,7 +21,8 @@ var VIEWS = {
   Register: Register,
   Items: Items,
   ItemShow: ItemShow,
-  Likes: Likes
+  Likes: Likes,
+  UserDataForm: UserDataForm
 }
 
 var Repiws = React.createClass({

@@ -21,6 +21,7 @@ var privateMethods = function() {
     ParseUserUtils.on("dislikes", ItemActions.dislikes);
     ParseUserUtils.on("loggedIn", UserActions.loggedIn);
     ParseUserUtils.on("loggedOut", UserActions.loggedOut);
+    ParseUserUtils.on("userDataSaved", UserActions.savedUserData);
   };
 }
 

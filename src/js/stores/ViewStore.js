@@ -73,6 +73,11 @@ ViewStore.dispatchToken = Dispatcher.register(function(action) {
       ViewStore.emitChange();
       break;
 
+    case "view-show-userDataForm":
+      ViewStore.set("UserDataForm");
+      ViewStore.emitChange();
+      break;
+
     case "view-set-menu":
       ViewStore.setMenu(action.data);
       ViewStore.emitChange();

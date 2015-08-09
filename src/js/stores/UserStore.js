@@ -5,86 +5,93 @@ var asEvented = require("asEvented");
 var Dispatcher = require("./../dispatcher/Dispatcher");
 var ParseUserUtils = require("./../utils/ParseUserUtils");
 
+class UserStore {
+  constructor() {
+    this._currentUser = null;
+  };
 
-var UserStore = function() {
-  this._currentUser = null;
-}
-
-var publicMethods = function() {
-  this.initialize = function() {
+  initialize() {
     ParseUserUtils.initialize();
   };
 
-  this.emitChange = function() {
+  emitChange() {
     this.trigger("change");
   };
 
-  this.get = function() {
+  get() {
     return this._currentUser;
   };
 
-  this.register = function(registerData) {
+  register(registerData) {
     ParseUserUtils.register(registerData);
   };
 
-  this.login = function(loginData) {
+  login(loginData) {
     ParseUserUtils.logIn(loginData);
   };
 
-  this.logout = function() {
+  logout() {
     ParseUserUtils.logOut();
   };
 
-  this.facebookLogin = function() {
+  facebookLogin() {
     ParseUserUtils.facebookLogIn();
   };
 
-  this.loggedIn = function(currentUser) {
+  loggedIn(currentUser) {
     this._currentUser = currentUser;
   };
 
-  this.loggedOut = function() {
+  loggedOut() {
     this._currentUser = null;
+  };
+
+  saveData(userData) {
+    ParseUserUtils.saveData(userData);
   };
 }
 
-var privateMethods = function() {}
-
-privateMethods.call(UserStore.prototype);
-publicMethods.call(UserStore.prototype);
 asEvented.call(UserStore.prototype);
 
-var UserStore = new UserStore();
+var userStore = new UserStore();
 
-UserStore.dispatchToken = Dispatcher.register(function(action) {
+userStore.dispatchToken = Dispatcher.register((action) => {
   switch (action.type) {
     case "user-register":
-      UserStore.register(action.data);
+      userStore.register(action.data);
       break;
 
     case "user-login":
-      UserStore.login(action.data);
+      userStore.login(action.data);
       break;
 
     case "user-facebookLogin":
-      UserStore.facebookLogin();
+      userStore.facebookLogin();
       break;
 
     case "user-registered":
     case "user-loggedIn":
-      UserStore.loggedIn(action.data);
-      UserStore.emitChange();
+      userStore.loggedIn(action.data);
+      userStore.emitChange();
       break;
 
     case "user-logout":
-      UserStore.logout();
+      userStore.logout();
       break;
 
     case "user-loggedOut":
-      UserStore.loggedOut();
-      UserStore.emitChange();
+      userStore.loggedOut();
+      userStore.emitChange();
+      break;
+
+    case "user-data-save":
+      userStore.saveData(action.data);
+      break;
+
+    case "user-data-saved":
+      userStore.emitChange();
       break;
   }
 });
 
-module.exports = UserStore;
+module.exports = userStore;

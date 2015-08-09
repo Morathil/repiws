@@ -8,111 +8,128 @@ var ENV = require("../../../.env.json");
 var LIKE_RELATION = "likes" + ENV.OBJECT_ITEM_NAME;
 var DISLIKE_RELATION = "dislikes" + ENV.OBJECT_ITEM_NAME;
 
-var ParseUserUtils = function() {
-  this._parse = parse;
-}
+class ParseUserUtils {
+  constructor() {
+    this._parse = parse;
+  };
 
-var publicMethods = function() {
-  this.initialize = function() {
+  initialize() {
     var currentUser = this._parse.User.current();
     if (currentUser) {
       this.trigger("loggedIn", currentUser);
     }
   };
 
-  this.current = function () {
+  current () {
     return this._parse.User.current();
   }
 
-  this.register = function(userData) {
+  register(userData) {
     var user = new this._parse.User();
     user.set("username", userData.userName);
     user.set("password", userData.password);
 
     var that = this;
-    return new RSVP.Promise(function(resolve, reject) {
+    return new RSVP.Promise((resolve, reject) => {
       user.signUp(null, {
         success: resolve,
         error: reject
-      }).then(function(user) {
+      }).then((user) => {
         that.trigger("registered", user);
       });
     });
   };
 
-  this.logIn = function(userData) {
+  logIn(userData) {
     var that = this;
-    return new RSVP.Promise(function(resolve, reject) {
+    return new RSVP.Promise((resolve, reject) => {
       that._parse.User.logIn(userData.userName, userData.password, {
         success: resolve,
         error: reject
-      }).then(function(user) {
+      }).then((user) => {
         that.trigger("loggedIn", user);
       });
     });
   };
 
-  this.facebookLogIn = function() {
+  facebookLogIn() {
     var that = this;
-    return new RSVP.Promise(function(resolve, reject) {
+    return new RSVP.Promise((resolve, reject) => {
       that._parse.FacebookUtils.logIn(null, {
         success: resolve,
         error: reject
       });
-    }).then(function(user) {
+    }).then((user) => {
       that.trigger("loggedIn", user);
     });
   };
 
-  this.logOut = function() {
+  logOut() {
     var that = this;
-    return new RSVP.Promise(function(resolve, reject) {
+    return new RSVP.Promise((resolve, reject) => {
       that._parse.User.logOut();
       resolve();
-    }).then(function() {
+    }).then(() => {
       that.trigger("loggedOut");
     });
   };
 
-  this.getLikes = function() {
+  getLikes() {
     var that = this;
     return this._getRelation(LIKE_RELATION)
-      .then(function(likes) {
+      .then((likes) => {
         that.trigger("likes", likes);
         return likes;
       });
   };
 
-  this.getDislikes = function() {
+  getDislikes() {
     var that = this;
     return this._getRelation(DISLIKE_RELATION)
-      .then(function(dislikes) {
+      .then((dislikes) => {
         that.trigger("dislikes", dislikes);
         return dislikes;
       });
   };
 
-  this.like = function(item) {
+  like(item) {
     return this._setRelation(LIKE_RELATION, item);
   };
 
-  this.dislike = function(item) {
+  dislike(item) {
     return this._setRelation(DISLIKE_RELATION, item);
   };
-}
 
-var privateMethods = function() {
-  this._setRelation = function(relationName, item) {
+  saveData(data) {
+    var currentUser = this.current();
+    var that = this;
+    for (var key in data) {
+      currentUser.set(key, data[key]);
+    }
+
+    return new RSVP.Promise(function(resolve, reject) {
+      currentUser.save({
+        success: resolve,
+        error: reject
+      }).then(() => {
+        that.trigger("userDataSaved");
+      });
+    });
+  }
+
+  // PRIVATE
+
+  _setRelation(relationName, item) {
     var user = this._parse.User.current();
     var relation = user.relation(relationName);
     relation.add(item);
     return user.save();
   };
 
-  this._getRelation = function(relationName) {
+  _getRelation(relationName) {
     var user = this._parse.User.current();
     var relation = user.relation(relationName);
-    return new RSVP.Promise(function(resolve, reject) {
+    return new RSVP.Promise((resolve, reject) => {
       relation.query().limit(1000).find({
         success: resolve,
         error: reject
@@ -121,8 +138,6 @@ var privateMethods = function() {
   };
 }
 
-privateMethods.call(ParseUserUtils.prototype);
-publicMethods.call(ParseUserUtils.prototype);
 asEvented.call(ParseUserUtils.prototype);
 
 module.exports = new ParseUserUtils();

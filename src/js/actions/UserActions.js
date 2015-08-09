@@ -3,56 +3,71 @@
 
 var Dispatcher = require("./../dispatcher/Dispatcher");
 
-var UserActions = function() {}
-
-var publicMethods = function() {
-  this.register = function(registerData) {
+class UserActions {
+  register(registerData) {
     Dispatcher.dispatch({
       type: "user-register",
       data: registerData
     });
   };
 
-  this.login = function(loginData) {
+  login(loginData) {
     Dispatcher.dispatch({
       type: "user-login",
       data: loginData
     });
   };
 
-  this.facebookLogin = function() {
+  facebookLogin() {
     Dispatcher.dispatch({
       type: "user-facebookLogin"
     });
   };
 
-  this.logout = function() {
+  logout() {
     Dispatcher.dispatch({
       type: "user-logout"
     });
   };
 
-  this.registered = function(user) {
+  registered(user) {
     Dispatcher.dispatch({
       type: "user-registered",
       data: user
     });
   };
 
-  this.loggedIn = function(user) {
+  loggedIn(user) {
     Dispatcher.dispatch({
       type: "user-loggedIn",
       data: user
     });
   };
 
-  this.loggedOut = function() {
+  loggedOut() {
     Dispatcher.dispatch({
       type: "user-loggedOut"
     });
   };
-}
 
-publicMethods.call(UserActions.prototype);
+  loggedOut() {
+    Dispatcher.dispatch({
+      type: "user-loggedOut"
+    });
+  };
+
+  saveUserData(userData) {
+    Dispatcher.dispatch({
+      type: "user-data-save",
+      data: userData
+    });
+  };
+
+  savedUserData() {
+    Dispatcher.dispatch({
+      type: "user-data-saved"
+    });
+  };
+}
 
 module.exports = new UserActions();

@@ -3,49 +3,51 @@
 
 var Dispatcher = require("./../dispatcher/Dispatcher");
 
-var UserActions = function() {}
-
-var publicMethods = function() {
-  this.back = function(view) {
+class UserActions {
+  back(view) {
     Dispatcher.dispatch({
       type: "view-back",
       data: view
     });
   };
 
-  this.showRegister = function() {
+  showRegister() {
     Dispatcher.dispatch({
       type: "view-show-register"
     });
   };
 
-  this.showItem = function(item) {
+  showItem(item) {
     Dispatcher.dispatch({
       type: "view-show-item",
       data: item
     });
   };
 
-  this.showItems = function() {
+  showItems() {
     Dispatcher.dispatch({
       type: "view-show-items"
     });
   };
 
-  this.setMenu = function(isActive) {
+  setMenu(isActive) {
     Dispatcher.dispatch({
       type: "view-set-menu",
       data: isActive
     });
   };
 
-  this.showLikes = function() {
+  showLikes() {
     Dispatcher.dispatch({
       type: "view-show-likes"
     });
   };
-}
 
-publicMethods.call(UserActions.prototype);
+  showUserDataForm() {
+    Dispatcher.dispatch({
+      type: "view-show-userDataForm"
+    });
+  };
+}
 
 module.exports = new UserActions();

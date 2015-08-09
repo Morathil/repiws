@@ -46,6 +46,11 @@ var Menu = React.createClass({
           <span>REFRESH DATA</span>
           <i className={"fa fa-cloud-download fa-2x"}></i>
         </div>
+        <div onClick={this._showUserDataForm}>
+          <span>USER DATA FORM</span>
+          <i className={"fa fa-cloud-download fa-2x"}></i>
+        </div>
+
       </div>
     );
   },
@@ -64,6 +69,10 @@ var Menu = React.createClass({
 
   _showItems: function() {
     ViewActions.showItems();
+  },
+
+  _showUserDataForm: function() {
+    ViewActions.showUserDataForm();
   },
 
   _onUserStoreChange: function() {
